@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Estuda+ – Protótipo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primaria: #1D4ED8; --primaria-escura: #1E3A8A;
+    --texto: #1F2937; --texto-secundario: #4B5563;
+    --borda-campo: #64748B; --borda: #E2E8F0;
+    --fundo: #F8FAFC; --superficie: #FFFFFF;
+    --alta-t: #9A3412; --alta-f: #FFEDD5;
+    --media-t: #854D0E; --media-f: #FEF9C3;
+    --baixa-t: #1E40AF; --baixa-f: #DBEAFE;
+    --ok-t: #0F766E; --ok-f: #CCFBF1;
+    --aviso-t: #92400E; --aviso-f: #FEF3C7;
+    --erro-t: #B91C1C; --erro-f: #FEE2E2;
+  }
+  * { box-sizing: border-box; }
+  /* foco nunca escondido atrás do cabeçalho ou do menu fixos (WCAG 2.4.11) */
+  html { scroll-padding-top: 72px; scroll-padding-bottom: 96px; }
+  body { margin: 0; font-family: "Atkinson Hyperlegible", system-ui, sans-serif; font-size: 16px; line-height: 1.5; color: var(--texto); background: #CBD5E1; }
+  /* plataforma mobile: no computador o app aparece na largura de um celular */
+  #app { max-width: 430px; margin: 0 auto; min-height: 100vh; background: var(--fundo); display: flex; flex-direction: column; }
+  @media (min-width: 600px) { #app { box-shadow: 0 0 0 1px #94A3B8, 0 8px 32px rgba(0,0,0,.2); } }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }
+
+  h1 { font-size: 28px; margin: 0 0 8px; line-height: 1.25; } h2 { font-size: 22px; margin: 24px 0 8px; } h3 { font-size: 18px; margin: 0; }
+  p { margin: 0 0 8px; } .peq { font-size: 14px; color: var(--texto-secundario); }
+  ul.limpa { list-style: none; padding: 0; margin: 0; }
+  :focus-visible { outline: 3px solid var(--primaria-escura); outline-offset: 2px; }
+  .pular { position: absolute; left: -999px; } .pular:focus { left: 16px; top: 8px; background: #fff; padding: 8px; z-index: 30; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  header { position: sticky; top: 0; z-index: 5; background: var(--primaria); color: #fff; padding: 8px 16px; min-height: 56px; display: flex; align-items: center; gap: 12px; }
+  header .marca { font-size: 20px; font-weight: 700; } header .ola { font-size: 14px; margin-left: auto; }
+  header .voltar { color: #fff; font: inherit; font-weight: 700; background: none; border: 2px solid #fff; border-radius: 8px; min-height: 44px; padding: 0 12px; text-decoration: none; display: inline-flex; align-items: center; }
+  header .voltar:focus-visible { outline-color: #fff; }
+  main { flex: 1; padding: 24px 16px 32px; }
+  nav { position: sticky; bottom: 0; z-index: 5; background: #fff; border-top: 1px solid var(--borda-campo); display: flex; }
+  nav a { flex: 1; text-align: center; padding: 6px 2px; color: var(--texto-secundario); text-decoration: none; font-size: 14px; min-height: 60px; border-top: 4px solid transparent; }
+  nav a .ic { display: block; font-size: 20px; line-height: 1.3; }
+  nav a[aria-current="page"] { color: var(--primaria); font-weight: 700; border-top-color: var(--primaria); text-decoration: underline; text-underline-offset: 3px; }
+
+  .card { background: var(--superficie); border: 1px solid var(--borda); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+  .atv { display: flex; gap: 12px; align-items: flex-start; justify-content: space-between; }
+  .atv.feita h3 { text-decoration: line-through; color: var(--texto-secundario); }
+  .atv.novo { border: 2px solid var(--primaria); }
+  .tag { display: inline-block; font-size: 14px; font-weight: 700; padding: 2px 8px; border-radius: 6px; margin: 4px 4px 0 0; }
+  .tag .sim { display: inline-block; min-width: 1ch; text-align: center; font-weight: 700; }
+  .tag.alta { color: var(--alta-t); background: var(--alta-f); }
+  .tag.media { color: var(--media-t); background: var(--media-f); }
+  .tag.baixa { color: var(--baixa-t); background: var(--baixa-f); }
+  .tag.ok { color: var(--ok-t); background: var(--ok-f); }
+  .tag.info { color: var(--primaria-escura); background: var(--baixa-f); }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 48px; padding: 0 20px; border-radius: 10px; font: inherit; font-weight: 700; cursor: pointer; border: 2px solid var(--primaria); text-decoration: none; text-align: center; }
+  .btn.prim { background: var(--primaria); color: #fff; } .btn.prim:hover { background: var(--primaria-escura); }
+  .btn.sec { background: #fff; color: var(--primaria); }
+  .btn.peq-btn { min-height: 44px; padding: 0 12px; font-size: 14px; }
+  .btn.perigo { background: #fff; color: var(--erro-t); border-color: var(--erro-t); }
+  .btn.bloco { width: 100%; }
+  .link-btn { background: none; border: 0; padding: 0; min-height: 44px; font: inherit; font-weight: 700; color: var(--primaria); text-decoration: underline; cursor: pointer; }
+  .acoes { display: flex; flex-direction: column; gap: 12px; margin-top: 24px; }
+
+  .alerta { border-left: 4px solid; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; }
+  .alerta.aviso { color: var(--aviso-t); background: var(--aviso-f); }
+  .alerta.erro { color: var(--erro-t); background: var(--erro-f); }
+  .alerta.ok { color: var(--ok-t); background: var(--ok-f); }
+  .alerta strong { display: block; } .alerta ul { margin: 4px 0 0; padding-left: 20px; }
+  .alerta .link-btn { color: inherit; min-height: 32px; }
+
+  label, legend { display: block; font-weight: 700; margin-bottom: 4px; }
+  .obrig { font-weight: 400; font-size: 14px; color: var(--texto-secundario); }
+  .campo { margin-bottom: 20px; }
+  input[type=text], input[type=date], select { width: 100%; min-height: 48px; padding: 8px 12px; font: inherit; border: 2px solid var(--borda-campo); border-radius: 8px; background: #fff; color: var(--texto); }
+  [aria-invalid="true"] { border-color: var(--erro-t) !important; border-width: 3px !important; }
+  .msg-erro { color: var(--erro-t); font-size: 14px; font-weight: 700; margin-top: 4px; }
+  .msg-erro:empty { display: none; }
+  fieldset { border: 0; padding: 0; margin: 0 0 20px; min-width: 0; }
+  .opcoes { display: flex; flex-wrap: wrap; gap: 8px; }
+  .opcoes.coluna { flex-direction: column; }
+  .opcoes label { display: flex; align-items: center; gap: 10px; font-weight: 400; border: 2px solid var(--borda-campo); border-radius: 8px; padding: 8px 12px; min-height: 48px; cursor: pointer; margin: 0; background: #fff; }
+  .opcoes input { width: 22px; height: 22px; accent-color: var(--primaria); flex: none; }
+  .opcoes label:has(input:checked) { border-color: var(--primaria); border-width: 3px; font-weight: 700; }
+  .opcoes label:has(input:focus-visible) { outline: 3px solid var(--primaria-escura); outline-offset: 2px; }
+  .painel { border: 2px dashed var(--borda-campo); border-radius: 8px; padding: 12px; margin-top: 8px; }
+  .dia-disp { border: 1px solid var(--borda); border-radius: 8px; padding: 12px; background: #fff; margin-bottom: 8px; }
+  .dia-disp .horas { display: flex; gap: 12px; margin-top: 8px; } .dia-disp .horas > div { flex: 1; }
+
+  .etapas { margin-bottom: 16px; } .barra { height: 8px; background: var(--borda); border-radius: 4px; overflow: hidden; margin-top: 4px; } .barra div { height: 100%; background: var(--primaria); }
+  .sessao { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 0; border-top: 1px solid var(--borda); }
+  .hora { font-weight: 700; white-space: nowrap; }
+
+  #toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: 76px; width: min(398px, calc(100vw - 32px)); background: #111827; color: #fff; padding: 8px 8px 8px 16px; border-radius: 10px; display: none; gap: 8px; align-items: center; z-index: 20; }
+  #toast span { flex: 1; }
+  #toast button { background: none; border: 0; color: #BFDBFE; font: inherit; font-weight: 700; cursor: pointer; text-decoration: underline; min-height: 44px; min-width: 44px; padding: 0 8px; }
+  #toast button:focus-visible { outline-color: #fff; }
+  dialog { border: 0; border-radius: 12px; padding: 24px; max-width: 360px; width: calc(100vw - 32px); } dialog::backdrop { background: rgba(0,0,0,.55); }
+</style>
+</head>
+<body>
+<a class="pular" href="#conteudo" onclick="event.preventDefault();document.getElementById('conteudo').focus()">Pular para o conteúdo</a>
+<div id="app">
+  <header id="topo"></header>
+  <main id="conteudo" tabindex="-1"></main>
+  <nav aria-label="Menu principal">
+    <a href="#inicio" data-sec="inicio"><span class="ic" aria-hidden="true">⌂</span>Início</a>
+    <a href="#atividades" data-sec="atividades"><span class="ic" aria-hidden="true">☰</span>Atividades</a>
+    <a href="#planejamento" data-sec="planejamento"><span class="ic" aria-hidden="true">▦</span>Planejamento</a>
+    <a href="#calendario" data-sec="calendario"><span class="ic" aria-hidden="true">▤</span>Calendário</a>
+  </nav>
+</div>
+<div id="toast" role="status" aria-live="polite"><span id="toast-txt"></span><button id="toast-desfazer" type="button">Desfazer</button><button id="toast-fechar" type="button" aria-label="Fechar mensagem">✕</button></div>
+<div id="anuncio" class="sr" aria-live="polite"></div>
+<dialog id="dlg" aria-labelledby="dlg-t" aria-describedby="dlg-p">
+  <h2 id="dlg-t" style="margin-top:0">Excluir atividade?</h2>
+  <p id="dlg-p"></p>
+  <div class="acoes"><button class="btn perigo" id="dlg-sim" type="button"><span aria-hidden="true">🗑</span> Excluir atividade</button><button class="btn sec" id="dlg-nao" type="button">Cancelar</button></div>
+</dialog>
+
+<script>
+/* ================= Dados fictícios (sem backend) ================= */
+const HOJE = new Date(2026, 10, 16);   // seg, 16/11/2026 – data fixa para a demonstração
+const LIMITE_DIA = 3;                  // 3 ou mais entregas no mesmo dia = aviso de sobrecarga
+const LIMITE_ESTUDO = 180;             // mais de 3 h de estudo no dia = aviso de sobrecarga
+const PRIO = {
+  alta:  { sim: "!", nome: "Alta",  desc: "precisa de atenção imediata" },
+  media: { sim: "=", nome: "Média", desc: "importante, mas pode esperar um pouco" },
+  baixa: { sim: "↓", nome: "Baixa", desc: "pode ser feita depois" },
+};
+const SEMANA = [
+  { k: "seg", nome: "Segunda", data: "2026-11-16" }, { k: "ter", nome: "Terça", data: "2026-11-17" },
+  { k: "qua", nome: "Quarta", data: "2026-11-18" },  { k: "qui", nome: "Quinta", data: "2026-11-19" },
+  { k: "sex", nome: "Sexta", data: "2026-11-20" },   { k: "sab", nome: "Sábado", data: "2026-11-21" },
+  { k: "dom", nome: "Domingo", data: "2026-11-22" },
+];
+const DIAS_CURTOS = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
+
+let disciplinas = ["Matemática", "Português", "Física", "Biologia", "História", "Geografia", "Inglês"];
+let atividades = [
+  { id: 1, titulo: "Prova de funções", disc: "Matemática", tipo: "Prova", data: "2026-11-19", prio: "alta", feita: false },
+  { id: 2, titulo: "Trabalho sobre Revolução Francesa", disc: "História", tipo: "Trabalho", data: "2026-11-19", prio: "media", feita: false },
+  { id: 3, titulo: "Lista de exercícios de cinemática", disc: "Física", tipo: "Tarefa", data: "2026-11-19", prio: "media", feita: false },
+  { id: 4, titulo: "Redação dissertativa", disc: "Português", tipo: "Trabalho", data: "2026-11-23", prio: "baixa", feita: false },
+  { id: 5, titulo: "Vocabulário da unidade 3", disc: "Inglês", tipo: "Tarefa", data: "2026-11-17", prio: "baixa", feita: false },
+  { id: 6, titulo: "Questionário de células", disc: "Biologia", tipo: "Tarefa", data: "2026-11-13", prio: "media", feita: true },
+];
+let proxId = 100, ultimoCadastro = null;
+let plano = null;                          // planejamento salvo
+let rasc = null;                           // planejamento em edição { disp: {seg:{ini,fim}}, sessoes: [] }
+
+/* ================= Utilitários ================= */
+const $ = s => document.querySelector(s);
+const main = $("#conteudo");
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const toDate = s => { const [a, m, d] = s.split("-").map(Number); return new Date(a, m - 1, d); };
+const fmt = s => { const d = toDate(s); return `${DIAS_CURTOS[d.getDay()]}, ${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}`; };
+const diasAte = s => Math.round((toDate(s) - HOJE) / 864e5);
+const quando = s => { const d = diasAte(s); return d < 0 ? `atrasada há ${-d} dia${d < -1 ? "s" : ""}` : d === 0 ? "hoje" : d === 1 ? "amanhã" : `em ${d} dias`; };
+const noDia = s => atividades.filter(a => a.data === s && !a.feita).length;
+const min = h => { const [a, b] = h.split(":").map(Number); return a * 60 + b; };
+const hhmm = m => `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`;
+const dur = m => m < 60 ? `${m} min` : `${Math.floor(m / 60)} h${m % 60 ? " " + (m % 60) + " min" : ""}`;
+const dia = k => SEMANA.find(d => d.k === k);
+const clone = o => JSON.parse(JSON.stringify(o));
+const ir = h => { location.hash = h; };
+const anunciar = t => { const a = $("#anuncio"); a.textContent = ""; setTimeout(() => a.textContent = t, 50); };
+const tag = p => `<span class="tag ${p}"><span class="sr">Prioridade </span><span class="sim" aria-hidden="true">${PRIO[p].sim}</span> ${PRIO[p].nome}</span>`;
+const ordemPrio = p => ["alta", "media", "baixa"].indexOf(p);
+const ordenar = l => [...l].sort((x, y) => x.feita - y.feita || x.data.localeCompare(y.data) || ordemPrio(x.prio) - ordemPrio(y.prio));
+const pendentes = () => atividades.filter(a => !a.feita);
+const opcoesHora = (de, ate, sel) => { let o = ""; for (let m = de; m <= ate; m += 30) o += `<option value="${hhmm(m)}" ${sel === hhmm(m) ? "selected" : ""}>${hhmm(m)}</option>`; return o; };
+
+/* ---- Mensagem rápida (toast): não some enquanto o usuário interage com ela ---- */
+let desfazerFn = null, toastTimer = null;
+const esconderToast = () => { $("#toast").style.display = "none"; clearTimeout(toastTimer); };
+const agendarToast = () => { clearTimeout(toastTimer); toastTimer = setTimeout(esconderToast, 10000); };
+function toast(txt, desfazer) {
+  $("#toast-txt").textContent = txt;
+  desfazerFn = desfazer || null;
+  $("#toast-desfazer").style.display = desfazer ? "" : "none";
+  $("#toast").style.display = "flex";
+  agendarToast();
+}
+$("#toast").addEventListener("mouseenter", () => clearTimeout(toastTimer));
+$("#toast").addEventListener("focusin", () => clearTimeout(toastTimer));
+$("#toast").addEventListener("mouseleave", agendarToast);
+$("#toast").addEventListener("focusout", agendarToast);
+$("#toast-desfazer").onclick = () => { if (desfazerFn) desfazerFn(); esconderToast(); anunciar("Ação desfeita."); };
+$("#toast-fechar").onclick = esconderToast;
+
+/* ---- Erros de formulário: resumo no topo + mensagem no campo + foco no 1º erro ---- */
+function limparErros() {
+  main.querySelectorAll(".msg-erro").forEach(e => e.textContent = "");
+  main.querySelectorAll("[aria-invalid]").forEach(e => e.removeAttribute("aria-invalid"));
+  const r = $("#resumo-erros"); if (r) r.innerHTML = "";
+}
+function mostrarErros(lista) {     // lista: [{ campo, msg }]
+  limparErros();
+  if (!lista.length) return true;
+  lista.forEach(e => {
+    const c = $("#" + e.campo); c.setAttribute("aria-invalid", "true");
+    const m = $("#e-" + e.campo); if (m) m.textContent = "✕ " + e.msg;
+  });
+  $("#resumo-erros").innerHTML = `<div class="alerta erro" role="alert"><strong><span aria-hidden="true">✕</span> ${lista.length > 1 ? `Corrija ${lista.length} campos` : "Corrija 1 campo"} para continuar:</strong>
+    <ul>${lista.map(e => `<li><button type="button" class="link-btn" data-focar="${e.campo}">${esc(e.rotulo || e.msg)}</button></li>`).join("")}</ul></div>`;
+  focar(lista[0].campo);
+  return false;
+}
+function focar(id) { const el = $("#" + id); (el.matches("fieldset, div") ? el.querySelector("input, select") : el).focus(); }
+
+/* ================= Componentes ================= */
+function cartao(a) {
+  return `<li class="card atv ${a.feita ? "feita" : ""} ${a.id === ultimoCadastro ? "novo" : ""}">
+    <div><h3>${esc(a.titulo)}</h3>
+      <p class="peq">${esc(a.tipo)} · ${esc(a.disc)}<br>Entrega: ${fmt(a.data)} (${quando(a.data)})</p>
+      ${a.feita ? '<span class="tag ok"><span aria-hidden="true">✓</span> Concluída</span>' : tag(a.prio)}
+      ${a.id === ultimoCadastro ? '<span class="tag info">Nova</span>' : ""}</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      ${a.feita ? "" : `<button class="btn sec peq-btn" data-concluir="${a.id}" type="button"><span aria-hidden="true">✓</span> Concluir<span class="sr"> ${esc(a.titulo)}</span></button>`}
+      <button class="btn perigo peq-btn" data-excluir="${a.id}" type="button"><span aria-hidden="true">🗑</span> Excluir<span class="sr"> ${esc(a.titulo)}</span></button>
+    </div></li>`;
+}
+const opcoesDisc = sel => `<option value="">Selecione uma disciplina</option>` + disciplinas.map(d => `<option ${d === sel ? "selected" : ""}>${esc(d)}</option>`).join("");
+
+function etapas(n) {
+  const nomes = ["Disponibilidade", "Sessões de estudo", "Revisão"];
+  return `<div class="etapas"><p class="peq"><strong>Etapa ${n} de 3:</strong> ${nomes[n - 1]}</p>
+    <div class="barra" aria-hidden="true"><div style="width:${n / 3 * 100}%"></div></div></div>`;
+}
+function rotuloAlvo(s) {
+  if (s.alvo.startsWith("a:")) { const a = atividades.find(x => x.id == s.alvo.slice(2)); return a ? `${a.disc}: ${a.titulo}` : s.disc; }
+  return `${s.disc} (revisão geral)`;
+}
+const sessoesDoDia = (p, k) => p.sessoes.filter(s => s.dia === k).sort((a, b) => min(a.ini) - min(b.ini));
+const totalDia = (p, k) => sessoesDoDia(p, k).reduce((t, s) => t + s.dur, 0);
+
+function cronograma(p, editavel) {
+  const dias = SEMANA.filter(d => p.disp[d.k]);
+  return `<ul class="limpa">${dias.map(d => {
+    const ss = sessoesDoDia(p, d.k), t = totalDia(p, d.k);
+    return `<li class="card"><h3>${d.nome}, ${fmt(d.data).slice(5)}</h3>
+      <p class="peq">Disponível das ${p.disp[d.k].ini} às ${p.disp[d.k].fim} · ${ss.length ? "Total: " + dur(t) : "Sem sessões"}
+      ${t > LIMITE_ESTUDO ? `<br><strong style="color:var(--aviso-t)"><span aria-hidden="true">⚠</span> Acima de 3 h de estudo</strong>` : ""}</p>
+      ${ss.length ? `<ul class="limpa">${ss.map(s => `<li class="sessao"><div><span class="hora">${s.ini}–${hhmm(min(s.ini) + s.dur)}</span><br>${esc(rotuloAlvo(s))}</div>
+        ${editavel ? `<button class="btn perigo peq-btn" type="button" data-remover-sessao="${s.id}">Remover<span class="sr"> sessão de ${esc(rotuloAlvo(s))}, ${d.nome} às ${s.ini}</span></button>` : ""}</li>`).join("")}</ul>` : ""}
+    </li>`;
+  }).join("")}</ul>`;
+}
+
+/* Verificação do planejamento (HTA 4.2): conflitos bloqueiam, sobrecarga apenas avisa */
+function verificar(p) {
+  const conflitos = [], sobrecarga = [], provasSemEstudo = [];
+  SEMANA.forEach(d => {
+    const ss = sessoesDoDia(p, d.k);
+    ss.forEach((s, i) => {
+      const fim = min(s.ini) + s.dur;
+      if (!p.disp[d.k]) conflitos.push(`${rotuloAlvo(s)} está na ${d.nome.toLowerCase()}, mas esse dia não está mais disponível.`);
+      else if (min(s.ini) < min(p.disp[d.k].ini) || fim > min(p.disp[d.k].fim)) conflitos.push(`${rotuloAlvo(s)} (${d.nome.toLowerCase()}, ${s.ini}–${hhmm(fim)}) está fora do horário disponível.`);
+      const prox = ss[i + 1]; if (prox && min(prox.ini) < fim) conflitos.push(`${d.nome}: ${rotuloAlvo(s)} e ${rotuloAlvo(prox)} acontecem no mesmo horário.`);
+    });
+    if (totalDia(p, d.k) > LIMITE_ESTUDO) sobrecarga.push(`${d.nome}: ${dur(totalDia(p, d.k))} de estudo`);
+  });
+  pendentes().filter(a => a.tipo === "Prova" && diasAte(a.data) >= 0 && diasAte(a.data) <= 6).forEach(a => {
+    const temSessao = p.sessoes.some(s => s.disc === a.disc && dia(s.dia).data < a.data);
+    if (!temSessao) provasSemEstudo.push(`${a.titulo} (${a.disc}) é ${fmt(a.data)} e ainda não tem sessão de estudo antes dessa data.`);
+  });
+  return { conflitos, sobrecarga, provasSemEstudo };
+}
+
+/* ================= Telas ================= */
+const telas = {
+  inicio() {
+    const pend = ordenar(pendentes());
+    const urg = pend.filter(a => diasAte(a.data) <= 3);
+    const sobrec = [...new Set(pend.map(a => a.data))].filter(d => noDia(d) >= LIMITE_DIA);
+    const feitas = atividades.filter(a => a.feita).length, total = atividades.length;
+    const hoje = plano ? sessoesDoDia(plano, "seg") : [];
+    return `<h1 tabindex="-1">Olá, Lucas</h1><p class="peq">Segunda-feira, 16 de novembro</p>
+      ${sobrec.map(d => `<div class="alerta aviso"><strong><span aria-hidden="true">⚠</span> Dia com muitas atividades</strong>${fmt(d)} tem ${noDia(d)} entregas ou provas. Que tal adiantar alguma?</div>`).join("")}
+      <section class="card" aria-labelledby="t-prog"><h2 id="t-prog" style="margin-top:0;font-size:18px">Seu progresso</h2>
+        <p>${feitas} de ${total} atividades concluídas · ${pend.length} pendentes</p>
+        <div class="barra" role="progressbar" aria-label="Atividades concluídas" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="${feitas}"><div style="width:${feitas / total * 100}%"></div></div>
+      </section>
+      <div class="acoes" style="margin-top:0"><a class="btn prim" href="#nova-atividade"><span aria-hidden="true">＋</span> Nova atividade</a></div>
+      <h2>Próximos 3 dias</h2>
+      ${urg.length ? `<ul class="limpa">${urg.map(cartao).join("")}</ul>` : '<p class="peq">Nada com prazo próximo. Bom momento para adiantar conteúdo.</p>'}
+      <h2>Estudos de hoje</h2>
+      ${!plano ? `<div class="card"><p>Você ainda não tem um planejamento semanal de estudos.</p><a href="#planejamento">Criar planejamento semanal</a></div>`
+        : hoje.length ? `<ul class="limpa card">${hoje.map(s => `<li class="sessao"><div><span class="hora">${s.ini}–${hhmm(min(s.ini) + s.dur)}</span><br>${esc(rotuloAlvo(s))}</div></li>`).join("")}</ul>`
+        : '<p class="peq">Nenhuma sessão de estudo planejada para hoje.</p>'}`;
+  },
+
+  atividades() {
+    return `<h1 tabindex="-1">Atividades</h1>
+      <div class="acoes" style="margin:8px 0 16px"><a class="btn prim" href="#nova-atividade"><span aria-hidden="true">＋</span> Nova atividade</a>
+        <a class="btn sec" href="#disciplinas">Gerenciar disciplinas</a></div>
+      <ul class="limpa">${ordenar(atividades).map(cartao).join("")}</ul>`;
+  },
+
+  /* ---------- Tarefa crítica 1: cadastrar e priorizar uma atividade (Alternativa B – tela única) ---------- */
+  "nova-atividade"() {
+    return `<h1 tabindex="-1">Nova atividade</h1>
+      <p class="peq">Preencha as informações para cadastrar sua atividade.</p>
+      <div id="resumo-erros"></div>
+      <form id="f-atv" novalidate>
+        <div class="campo"><label for="titulo">Título <span class="obrig">(obrigatório)</span></label>
+          <input type="text" id="titulo" required autocomplete="off" aria-describedby="d-titulo e-titulo">
+          <p id="d-titulo" class="peq" style="margin-top:4px">Exemplo: Trabalho de Física</p><p id="e-titulo" class="msg-erro"></p></div>
+
+        <div class="campo"><label for="disc">Disciplina <span class="obrig">(obrigatório)</span></label>
+          <select id="disc" required aria-describedby="e-disc">${opcoesDisc()}</select><p id="e-disc" class="msg-erro"></p>
+          <button type="button" class="link-btn" id="btn-nova-disc" aria-expanded="false" aria-controls="painel-disc"><span aria-hidden="true">＋</span> Minha disciplina não está na lista</button>
+          <div id="painel-disc" class="painel" role="region" aria-labelledby="btn-nova-disc" hidden>
+            <label for="nd-nome">Nome da nova disciplina</label>
+            <input type="text" id="nd-nome" aria-describedby="e-nd-nome"><p id="e-nd-nome" class="msg-erro"></p>
+            <button type="button" class="btn sec peq-btn" id="nd-add" style="margin-top:8px">Adicionar disciplina</button>
+          </div></div>
+
+        <fieldset id="tipo"><legend>Tipo de atividade</legend><div class="opcoes">
+          ${["Prova", "Trabalho", "Tarefa"].map((t, i) => `<label><input type="radio" name="tipo" value="${t}" ${i === 0 ? "checked" : ""}>${t}</label>`).join("")}</div></fieldset>
+
+        <div class="campo"><label for="data">Data de entrega <span class="obrig">(obrigatório)</span></label>
+          <input type="date" id="data" required min="2026-11-16" aria-describedby="e-data"><p id="e-data" class="msg-erro"></p></div>
+
+        <fieldset id="prio"><legend>Prioridade</legend><div class="opcoes coluna">
+          ${Object.entries(PRIO).map(([k, p]) => `<label><input type="radio" name="prio" value="${k}" ${k === "media" ? "checked" : ""}>
+            <span><span class="tag ${k}" style="margin:0"><span class="sim" aria-hidden="true">${p.sim}</span> ${p.nome}</span> <span class="peq">${p.desc}</span></span></label>`).join("")}</div></fieldset>
+
+        <div id="aviso-dia"></div>
+        <div class="acoes"><button class="btn prim" type="submit">Salvar atividade</button><a class="btn sec" href="#atividades">Cancelar</a></div>
+      </form>`;
+  },
+
+  "atividade-salva"() {
+    const a = atividades.find(x => x.id === ultimoCadastro);
+    if (!a) { setTimeout(() => ir("atividades")); return ""; }
+    return `<div class="alerta ok" role="status"><strong><span aria-hidden="true">✓</span> Atividade salva</strong>Ela já aparece na sua lista de atividades.</div>
+      <h1 tabindex="-1">Atividade cadastrada</h1><p class="peq">Confira as informações:</p>
+      <ul class="limpa">${cartao(a)}</ul>
+      <div class="acoes"><a class="btn prim" href="#atividades">Ver lista de atividades</a><a class="btn sec" href="#nova-atividade"><span aria-hidden="true">＋</span> Cadastrar outra atividade</a></div>`;
+  },
+
+  disciplinas() {
+    return `<h1 tabindex="-1">Disciplinas</h1>
+      <div id="resumo-erros"></div>
+      <form id="f-disc" novalidate class="card">
+        <label for="nova-disc">Nome da disciplina</label>
+        <input type="text" id="nova-disc" aria-describedby="e-nova-disc"><p id="e-nova-disc" class="msg-erro"></p>
+        <button class="btn prim bloco" type="submit" style="margin-top:12px"><span aria-hidden="true">＋</span> Adicionar disciplina</button>
+      </form>
+      <ul class="limpa">${disciplinas.map(d => { const n = pendentes().filter(a => a.disc === d).length;
+        return `<li class="card"><h3>${esc(d)}</h3><p class="peq">${n ? `${n} atividade${n > 1 ? "s" : ""} pendente${n > 1 ? "s" : ""}` : "Nenhuma atividade pendente"}</p></li>`; }).join("")}</ul>`;
+  },
+
+  /* ---------- Tarefa crítica 2: criar um planejamento semanal de estudos ---------- */
+  planejamento() {
+    if (!plano) return `<h1 tabindex="-1">Planejamento de Estudos</h1>
+      <div class="card"><p>Você ainda não tem um planejamento para esta semana.</p>
+      <p class="peq">Você vai informar quando pode estudar e montar suas sessões de estudo. Leva cerca de 3 minutos.</p></div>
+      <div class="acoes"><button class="btn prim" type="button" data-plano="novo">Criar planejamento semanal</button></div>`;
+    return `<h1 tabindex="-1">Planejamento de Estudos</h1><p class="peq">Semana de 16 a 22/11</p>
+      ${cronograma(plano, false)}
+      <div class="acoes"><button class="btn prim" type="button" data-plano="editar">Editar planejamento semanal</button></div>`;
+  },
+
+  "plan-disp"() {
+    if (!rasc) { setTimeout(() => ir("planejamento")); return ""; }
+    return etapas(1) + `<h1 tabindex="-1">Quando você pode estudar?</h1>
+      <p class="peq">Marque os dias e informe o horário em que está livre.</p>
+      <div id="resumo-erros"></div>
+      <form id="f-disp" novalidate>
+        <fieldset id="dias" aria-describedby="e-dias"><legend>Dias disponíveis <span class="obrig">(marque pelo menos um)</span></legend>
+          ${SEMANA.map(d => { const v = rasc.disp[d.k];
+            return `<div class="dia-disp"><div class="opcoes"><label style="flex:1"><input type="checkbox" name="dia" value="${d.k}" ${v ? "checked" : ""} aria-controls="h-${d.k}" aria-expanded="${!!v}">${d.nome}</label></div>
+              <div class="horas" id="h-${d.k}" ${v ? "" : "hidden"}>
+                <div><label for="ini-${d.k}">Das</label><select id="ini-${d.k}">${opcoesHora(360, 1380, v ? v.ini : "19:00")}</select></div>
+                <div><label for="fim-${d.k}">Até</label><select id="fim-${d.k}" aria-describedby="e-fim-${d.k}">${opcoesHora(390, 1410, v ? v.fim : "21:00")}</select></div>
+              </div><p id="e-fim-${d.k}" class="msg-erro"></p></div>`; }).join("")}
+          <p id="e-dias" class="msg-erro"></p></fieldset>
+        <div class="acoes"><button class="btn prim" type="submit">Continuar</button><a class="btn sec" href="#planejamento">Cancelar</a></div>
+      </form>`;
+  },
+
+  "plan-sessoes"() {
+    if (!rasc || !Object.keys(rasc.disp).length) { setTimeout(() => ir("plan-disp")); return ""; }
+    const pend = [...pendentes()].sort((x, y) => ordemPrio(x.prio) - ordemPrio(y.prio) || x.data.localeCompare(y.data));
+    const diasDisp = SEMANA.filter(d => rasc.disp[d.k]);
+    return etapas(2) + `<h1 tabindex="-1">Monte suas sessões de estudo</h1>
+      <p class="peq">Adicione quantas sessões quiser. As atividades com prioridade alta aparecem primeiro.</p>
+      <div id="resumo-erros"></div>
+
+      <button type="button" class="btn sec bloco" id="btn-pend" aria-expanded="true" aria-controls="painel-pend">Atividades pendentes (${pend.length}) <span aria-hidden="true" id="seta-pend">▲</span></button>
+      <div id="painel-pend" role="region" aria-labelledby="btn-pend" style="margin-top:8px">
+        <ul class="limpa">${pend.map(a => `<li class="card" style="padding:12px"><h3 style="font-size:16px">${esc(a.titulo)}</h3>
+          <p class="peq" style="margin:0">${esc(a.disc)} · ${fmt(a.data)} (${quando(a.data)})</p>${tag(a.prio)}
+          <div><button type="button" class="link-btn" data-estudar="${a.id}">Estudar para esta atividade<span class="sr">: ${esc(a.titulo)}</span></button></div></li>`).join("")}</ul>
+      </div>
+
+      <form id="f-sessao" novalidate class="card" style="margin-top:16px" aria-labelledby="t-nova-sessao">
+        <h2 id="t-nova-sessao" style="margin-top:0">Nova sessão</h2>
+        <div class="campo"><label for="s-alvo">O que estudar <span class="obrig">(obrigatório)</span></label>
+          <select id="s-alvo" aria-describedby="e-s-alvo"><option value="">Selecione</option>
+            <optgroup label="Atividades pendentes">${pend.map(a => `<option value="a:${a.id}">${esc(a.disc)}: ${esc(a.titulo)}</option>`).join("")}</optgroup>
+            <optgroup label="Revisão geral da disciplina">${disciplinas.map(d => `<option value="d:${esc(d)}">${esc(d)}</option>`).join("")}</optgroup>
+          </select><p id="e-s-alvo" class="msg-erro"></p></div>
+        <div class="campo"><label for="s-dia">Dia</label>
+          <select id="s-dia">${diasDisp.map(d => `<option value="${d.k}">${d.nome} (livre das ${rasc.disp[d.k].ini} às ${rasc.disp[d.k].fim})</option>`).join("")}</select></div>
+        <div style="display:flex;gap:12px">
+          <div class="campo" style="flex:1"><label for="s-ini">Início</label><select id="s-ini" aria-describedby="e-s-ini"></select></div>
+          <div class="campo" style="flex:1"><label for="s-dur">Duração</label><select id="s-dur" aria-describedby="e-s-dur">
+            ${[30, 60, 90, 120].map(m => `<option value="${m}" ${m === 60 ? "selected" : ""}>${dur(m)}</option>`).join("")}</select></div>
+        </div>
+        <p id="e-s-ini" class="msg-erro"></p><p id="e-s-dur" class="msg-erro"></p>
+        <button class="btn sec bloco" type="submit"><span aria-hidden="true">＋</span> Adicionar sessão ao cronograma</button>
+      </form>
+
+      <h2>Sessões adicionadas (${rasc.sessoes.length})</h2>
+      ${rasc.sessoes.length ? cronograma({ ...rasc, disp: Object.fromEntries(Object.entries(rasc.disp).filter(([k]) => rasc.sessoes.some(s => s.dia === k))) }, true)
+        : '<p class="peq">Nenhuma sessão adicionada ainda.</p>'}
+      <div class="acoes"><button class="btn prim" type="button" id="ir-revisao">Revisar planejamento</button><a class="btn sec" href="#plan-disp">Voltar para disponibilidade</a></div>`;
+  },
+
+  "plan-revisao"() {
+    if (!rasc || !rasc.sessoes.length) { setTimeout(() => ir("plan-sessoes")); return ""; }
+    const v = verificar(rasc);
+    return etapas(3) + `<h1 tabindex="-1">Revise seu planejamento</h1>
+      <div id="resumo-erros"></div>
+      ${v.conflitos.length ? `<div class="alerta erro"><strong><span aria-hidden="true">✕</span> ${v.conflitos.length} conflito${v.conflitos.length > 1 ? "s" : ""} de horário</strong>
+          <ul>${v.conflitos.map(c => `<li>${esc(c)}</li>`).join("")}</ul>Remova ou ajuste as sessões antes de salvar.</div>`
+        : `<div class="alerta ok"><strong><span aria-hidden="true">✓</span> Nenhum conflito de horário</strong>Todas as sessões estão dentro dos horários disponíveis.</div>`}
+      ${v.sobrecarga.length ? `<div class="alerta aviso"><strong><span aria-hidden="true">⚠</span> Risco de sobrecarga</strong>
+          <ul>${v.sobrecarga.map(c => `<li>${esc(c)}</li>`).join("")}</ul>Mais de 3 horas de estudo no dia, além das aulas, pode cansar. Considere distribuir melhor ou incluir pausas.</div>` : ""}
+      ${v.provasSemEstudo.length ? `<div class="alerta aviso"><strong><span aria-hidden="true">⚠</span> Prova sem estudo planejado</strong>
+          <ul>${v.provasSemEstudo.map(c => `<li>${esc(c)}</li>`).join("")}</ul></div>` : ""}
+      <p>${rasc.sessoes.length} sessões · ${dur(rasc.sessoes.reduce((t, s) => t + s.dur, 0))} de estudo na semana</p>
+      ${cronograma(rasc, true)}
+      <div class="acoes"><button class="btn prim" type="button" id="salvar-plano"><span aria-hidden="true">✓</span> Salvar planejamento</button>
+        <a class="btn sec" href="#plan-sessoes">Ajustar sessões</a></div>`;
+  },
+
+  "plano-salvo"() {
+    if (!plano) { setTimeout(() => ir("planejamento")); return ""; }
+    return `<div class="alerta ok" role="status"><strong><span aria-hidden="true">✓</span> Planejamento salvo</strong>As sessões de cada dia aparecem na tela Início.</div>
+      <h1 tabindex="-1">Seu planejamento da semana</h1>${cronograma(plano, false)}
+      <div class="acoes"><a class="btn prim" href="#inicio">Ir para o Início</a><a class="btn sec" href="#planejamento">Ver planejamento</a></div>`;
+  },
+
+  calendario() {
+    return `<h1 tabindex="-1">Calendário</h1>
+      <div class="alerta aviso"><strong><span aria-hidden="true">⚠</span> Tela fora do escopo do protótipo</strong>O calendário não faz parte das duas tarefas críticas e aparece apenas no menu.</div>`;
+  },
+};
+
+/* Cabeçalho: telas internas têm botão Voltar com destino explícito */
+const VOLTAR = {
+  "nova-atividade": ["#atividades", "Atividades"], "atividade-salva": ["#atividades", "Atividades"], disciplinas: ["#atividades", "Atividades"],
+  "plan-disp": ["#planejamento", "Planejamento"], "plan-sessoes": ["#plan-disp", "Disponibilidade"], "plan-revisao": ["#plan-sessoes", "Sessões"],
+};
+const SECAO = { "nova-atividade": "atividades", "atividade-salva": "atividades", disciplinas: "atividades", "plan-disp": "planejamento", "plan-sessoes": "planejamento", "plan-revisao": "planejamento", "plano-salvo": "planejamento" };
+
+/* ================= Eventos ================= */
+function atualizarInicios() {
+  const d = $("#s-dia")?.value; if (!d) return;
+  const r = rasc.disp[d], atual = $("#s-ini").value;
+  $("#s-ini").innerHTML = opcoesHora(min(r.ini), min(r.fim) - 30, atual || r.ini);
+}
+
+main.addEventListener("submit", ev => {
+  ev.preventDefault();
+  const f = ev.target;
+
+  if (f.id === "f-atv") {
+    const titulo = $("#titulo").value.trim(), disc = $("#disc").value, data = $("#data").value;
+    const erros = [];
+    if (!titulo) erros.push({ campo: "titulo", msg: "Informe o título da atividade. Exemplo: Trabalho de Física.", rotulo: "Título: informe o título" });
+    if (!disc) erros.push({ campo: "disc", msg: "Escolha a disciplina. Se ela não estiver na lista, use “Minha disciplina não está na lista”.", rotulo: "Disciplina: escolha uma opção" });
+    if (!data) erros.push({ campo: "data", msg: "Informe a data de entrega.", rotulo: "Data de entrega: informe a data" });
+    else if (diasAte(data) < 0) erros.push({ campo: "data", msg: `A data ${fmt(data)} já passou. Escolha hoje (16/11) ou uma data futura.`, rotulo: "Data de entrega: a data já passou" });
+    if (!mostrarErros(erros)) return;
+    const aviso = $("#aviso-dia");
+    if (noDia(data) >= LIMITE_DIA && aviso.dataset.ok !== data) {
+      aviso.dataset.ok = data;
+      aviso.innerHTML = `<div class="alerta aviso" role="alert" tabindex="-1"><strong><span aria-hidden="true">⚠</span> ${fmt(data)} já tem ${noDia(data)} atividades</strong>Isso pode gerar sobrecarga. Você pode trocar a data ou salvar mesmo assim.</div>`;
+      f.querySelector("[type=submit]").textContent = "Salvar mesmo assim";
+      aviso.firstChild.focus();
+      return;
+    }
+    ultimoCadastro = ++proxId;
+    atividades.push({ id: ultimoCadastro, titulo, disc, data, tipo: f.tipo.value, prio: f.prio.value, feita: false });
+    ir("atividade-salva");
+  }
+
+  if (f.id === "f-disc") {
+    const nome = $("#nova-disc").value.trim();
+    const erro = !nome ? "Digite o nome da disciplina." : disciplinas.some(d => d.toLowerCase() === nome.toLowerCase()) ? `${nome} já está na sua lista.` : "";
+    if (!mostrarErros(erro ? [{ campo: "nova-disc", msg: erro }] : [])) return;
+    disciplinas.push(nome); render(false); toast(`Disciplina ${nome} adicionada.`); $("#nova-disc").focus();
+  }
+
+  if (f.id === "f-disp") {
+    const marcados = [...f.querySelectorAll("[name=dia]:checked")].map(i => i.value);
+    const erros = [];
+    if (!marcados.length) erros.push({ campo: "dias", msg: "Marque pelo menos um dia em que você pode estudar.", rotulo: "Dias disponíveis: marque pelo menos um" });
+    marcados.forEach(k => { if (min($("#fim-" + k).value) <= min($("#ini-" + k).value))
+      erros.push({ campo: "fim-" + k, msg: `O horário final precisa ser depois do inicial (${$("#ini-" + k).value}).`, rotulo: `${dia(k).nome}: horário final antes do inicial` }); });
+    if (!mostrarErros(erros)) return;
+    rasc.disp = Object.fromEntries(marcados.map(k => [k, { ini: $("#ini-" + k).value, fim: $("#fim-" + k).value }]));
+    ir("plan-sessoes");
+  }
+
+  if (f.id === "f-sessao") {
+    const alvo = $("#s-alvo").value, d = $("#s-dia").value, ini = $("#s-ini").value, m = Number($("#s-dur").value);
+    const erros = [];
+    if (!alvo) erros.push({ campo: "s-alvo", msg: "Escolha uma atividade ou disciplina para estudar.", rotulo: "O que estudar: escolha uma opção" });
+    else {
+      const fim = min(ini) + m, disp = rasc.disp[d];
+      const choque = sessoesDoDia(rasc, d).find(s => min(ini) < min(s.ini) + s.dur && fim > min(s.ini));
+      if (fim > min(disp.fim)) erros.push({ campo: "s-dur", msg: `A sessão terminaria às ${hhmm(fim)}, mas você está livre só até ${disp.fim} na ${dia(d).nome.toLowerCase()}. Escolha uma duração menor ou um início mais cedo.`, rotulo: "Duração: passa do horário disponível" });
+      else if (choque) erros.push({ campo: "s-ini", msg: `Conflito de horário: ${rotuloAlvo(choque)} já está das ${choque.ini} às ${hhmm(min(choque.ini) + choque.dur)}. Escolha outro início.`, rotulo: "Início: conflito com outra sessão" });
+    }
+    if (!mostrarErros(erros)) return;
+    const disc = alvo.startsWith("a:") ? atividades.find(a => a.id == alvo.slice(2)).disc : alvo.slice(2);
+    const s = { id: ++proxId, alvo, disc, dia: d, ini, dur: m };
+    rasc.sessoes.push(s);
+    render(false);
+    toast(`Sessão adicionada: ${rotuloAlvo(s)}, ${dia(d).nome.toLowerCase()} das ${ini} às ${hhmm(min(ini) + m)}.`);
+    $("#s-dia").value = d; atualizarInicios(); $("#s-alvo").focus();   // pronto para adicionar a próxima (HTA plano 3)
+  }
+});
+
+main.addEventListener("click", ev => {
+  const b = ev.target.closest("button"); if (!b) return;
+  if (b.dataset.focar) focar(b.dataset.focar);
+
+  if (b.dataset.concluir) {
+    const a = atividades.find(x => x.id == b.dataset.concluir); a.feita = true; render(false);
+    toast(`“${a.titulo}” marcada como concluída.`, () => { a.feita = false; render(false); });
+  }
+  if (b.dataset.excluir) {
+    const a = atividades.find(x => x.id == b.dataset.excluir);
+    $("#dlg-p").textContent = `“${a.titulo}” será removida da sua lista. Você poderá desfazer logo em seguida.`;
+    $("#dlg").showModal();
+    $("#dlg-sim").onclick = () => {
+      const pos = atividades.indexOf(a); atividades.splice(pos, 1); $("#dlg").close(); render(false);
+      toast(`Atividade “${a.titulo}” excluída.`, () => { atividades.splice(pos, 0, a); render(false); });
+    };
+  }
+
+  if (b.id === "btn-nova-disc") {
+    const aberto = b.getAttribute("aria-expanded") === "true";
+    b.setAttribute("aria-expanded", String(!aberto)); $("#painel-disc").hidden = aberto;
+    if (!aberto) $("#nd-nome").focus();
+  }
+  if (b.id === "nd-add") {     // HTA 1, plano 2: cadastrar a disciplina sem sair do formulário
+    const nome = $("#nd-nome").value.trim(), e = $("#e-nd-nome");
+    const erro = !nome ? "Digite o nome da disciplina." : disciplinas.some(d => d.toLowerCase() === nome.toLowerCase()) ? `${nome} já está na lista. Selecione-a acima.` : "";
+    e.textContent = erro ? "✕ " + erro : "";
+    if (erro) { $("#nd-nome").setAttribute("aria-invalid", "true"); $("#nd-nome").focus(); return; }
+    $("#nd-nome").removeAttribute("aria-invalid");
+    disciplinas.push(nome);
+    $("#disc").innerHTML = opcoesDisc(nome);
+    $("#nd-nome").value = ""; $("#painel-disc").hidden = true; $("#btn-nova-disc").setAttribute("aria-expanded", "false");
+    $("#disc").focus();
+    toast(`Disciplina ${nome} adicionada e selecionada.`);
+  }
+
+  if (b.id === "btn-pend") {   // painel recolhível com aria-expanded / aria-controls
+    const aberto = b.getAttribute("aria-expanded") === "true";
+    b.setAttribute("aria-expanded", String(!aberto)); $("#painel-pend").hidden = aberto; $("#seta-pend").textContent = aberto ? "▼" : "▲";
+  }
+  if (b.dataset.estudar) { $("#s-alvo").value = "a:" + b.dataset.estudar; $("#s-dia").focus(); anunciar("Atividade selecionada no formulário Nova sessão. Agora escolha o dia."); }
+
+  if (b.dataset.plano) { rasc = b.dataset.plano === "editar" ? clone(plano) : { disp: {}, sessoes: [] }; ir("plan-disp"); }
+  if (b.dataset.removerSessao) {
+    const i = rasc.sessoes.findIndex(s => s.id == b.dataset.removerSessao), s = rasc.sessoes[i];
+    rasc.sessoes.splice(i, 1); render(false);
+    toast(`Sessão removida: ${rotuloAlvo(s)}.`, () => { rasc.sessoes.splice(i, 0, s); render(false); });
+    main.querySelector("h1").focus();
+  }
+  if (b.id === "ir-revisao") {
+    if (!rasc.sessoes.length) {
+      $("#resumo-erros").innerHTML = `<div class="alerta erro" role="alert" tabindex="-1"><strong><span aria-hidden="true">✕</span> Nenhuma sessão adicionada</strong>Adicione pelo menos uma sessão de estudo antes de revisar.</div>`;
+      $("#resumo-erros .alerta").focus(); return;
+    }
+    ir("plan-revisao");
+  }
+  if (b.id === "salvar-plano") {
+    const v = verificar(rasc);
+    if (v.conflitos.length) {
+      $("#resumo-erros").innerHTML = `<div class="alerta erro" role="alert" tabindex="-1"><strong><span aria-hidden="true">✕</span> Não foi possível salvar</strong>Resolva os conflitos de horário indicados abaixo e tente novamente.</div>`;
+      $("#resumo-erros .alerta").focus(); return;
+    }
+    plano = clone(rasc); rasc = null; ir("plano-salvo");
+  }
+});
+
+main.addEventListener("change", ev => {
+  const t = ev.target;
+  if (t.id === "data") { const a = $("#aviso-dia"); a.innerHTML = ""; delete a.dataset.ok; $("#f-atv [type=submit]").textContent = "Salvar atividade"; }
+  if (t.name === "dia" && t.type === "checkbox") { $("#h-" + t.value).hidden = !t.checked; t.setAttribute("aria-expanded", String(t.checked)); }
+  if (t.id === "s-dia") { $("#s-ini").value = ""; atualizarInicios(); }
+});
+$("#dlg-nao").onclick = () => $("#dlg").close();
+
+/* ================= Navegação ================= */
+function render(focarTitulo) {
+  const t = location.hash.slice(1) || "inicio";
+  const nome = telas[t] ? t : "inicio";
+  main.innerHTML = telas[nome]();
+  const v = VOLTAR[nome];
+  $("#topo").innerHTML = v ? `<a class="voltar" href="${v[0]}"><span aria-hidden="true">←</span>&nbsp;Voltar<span class="sr"> para ${v[1]}</span></a><span class="marca">Estuda+</span>`
+                           : `<span class="marca">Estuda+</span><span class="ola">seg, 16/11</span>`;
+  const s = SECAO[nome] || nome;
+  document.querySelectorAll("nav a").forEach(a => a.dataset.sec === s ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"));
+  const h1 = main.querySelector("h1");
+  if (h1) document.title = h1.textContent + " – Estuda+";
+  if (nome === "plan-sessoes") atualizarInicios();
+  if (focarTitulo && h1) { window.scrollTo(0, 0); h1.focus(); }
+}
+window.addEventListener("hashchange", () => render(true));
+render(false);
+</script>
+</body>
+</html>
