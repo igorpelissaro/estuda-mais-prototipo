@@ -28,6 +28,9 @@
   @media (min-width: 600px) { #app { box-shadow: 0 0 0 1px #94A3B8, 0 8px 32px rgba(0,0,0,.2); } }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }
 
+  /* ícones SVG lineares (sempre acompanhados de texto) */
+  .ic { width: 1.15em; height: 1.15em; flex: none; vertical-align: -0.2em; }
+
   h1 { font-size: 28px; margin: 0 0 8px; line-height: 1.25; } h2 { font-size: 22px; margin: 24px 0 8px; } h3 { font-size: 18px; margin: 0; }
   p { margin: 0 0 8px; } .peq { font-size: 14px; color: var(--texto-secundario); }
   ul.limpa { list-style: none; padding: 0; margin: 0; }
@@ -37,20 +40,20 @@
 
   header { position: sticky; top: 0; z-index: 5; background: var(--primaria); color: #fff; padding: 8px 16px; min-height: 56px; display: flex; align-items: center; gap: 12px; }
   header .marca { font-size: 20px; font-weight: 700; } header .ola { font-size: 14px; margin-left: auto; }
-  header .voltar { color: #fff; font: inherit; font-weight: 700; background: none; border: 2px solid #fff; border-radius: 8px; min-height: 44px; padding: 0 12px; text-decoration: none; display: inline-flex; align-items: center; }
+  header .voltar { color: #fff; font: inherit; font-weight: 700; background: none; border: 2px solid #fff; border-radius: 8px; min-height: 44px; padding: 0 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
   header .voltar:focus-visible { outline-color: #fff; }
   main { flex: 1; padding: 24px 16px 32px; }
   nav { position: sticky; bottom: 0; z-index: 5; background: #fff; border-top: 1px solid var(--borda-campo); display: flex; }
-  nav a { flex: 1; text-align: center; padding: 6px 2px; color: var(--texto-secundario); text-decoration: none; font-size: 14px; min-height: 60px; border-top: 4px solid transparent; }
-  nav a .ic { display: block; font-size: 20px; line-height: 1.3; }
+  nav a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 6px 2px; color: var(--texto-secundario); text-decoration: none; font-size: 14px; min-height: 60px; border-top: 4px solid transparent; }
+  nav a .ic { width: 24px; height: 24px; }
   nav a[aria-current="page"] { color: var(--primaria); font-weight: 700; border-top-color: var(--primaria); text-decoration: underline; text-underline-offset: 3px; }
 
   .card { background: var(--superficie); border: 1px solid var(--borda); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
-  .atv { display: flex; gap: 12px; align-items: flex-start; justify-content: space-between; }
-  .atv.feita h3 { text-decoration: line-through; color: var(--texto-secundario); }
-  .atv.novo { border: 2px solid var(--primaria); }
-  .tag { display: inline-block; font-size: 14px; font-weight: 700; padding: 2px 8px; border-radius: 6px; margin: 4px 4px 0 0; }
-  .tag .sim { display: inline-block; min-width: 1ch; text-align: center; font-weight: 700; }
+  .card.feita h3 { text-decoration: line-through; color: var(--texto-secundario); }
+  .card.novo { border: 2px solid var(--primaria); }
+  .acoes-cartao { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .acoes-cartao .btn { flex: 1 1 auto; }
+  .tag { display: inline-flex; align-items: center; gap: 4px; font-size: 14px; font-weight: 700; padding: 2px 8px; border-radius: 6px; margin: 4px 4px 0 0; }
   .tag.alta { color: var(--alta-t); background: var(--alta-f); }
   .tag.media { color: var(--media-t); background: var(--media-f); }
   .tag.baixa { color: var(--baixa-t); background: var(--baixa-f); }
@@ -63,14 +66,14 @@
   .btn.peq-btn { min-height: 44px; padding: 0 12px; font-size: 14px; }
   .btn.perigo { background: #fff; color: var(--erro-t); border-color: var(--erro-t); }
   .btn.bloco { width: 100%; }
-  .link-btn { background: none; border: 0; padding: 0; min-height: 44px; font: inherit; font-weight: 700; color: var(--primaria); text-decoration: underline; cursor: pointer; }
+  .link-btn { background: none; border: 0; padding: 0; min-height: 44px; font: inherit; font-weight: 700; color: var(--primaria); text-decoration: underline; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; text-align: left; }
   .acoes { display: flex; flex-direction: column; gap: 12px; margin-top: 24px; }
 
   .alerta { border-left: 4px solid; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; }
   .alerta.aviso { color: var(--aviso-t); background: var(--aviso-f); }
   .alerta.erro { color: var(--erro-t); background: var(--erro-f); }
   .alerta.ok { color: var(--ok-t); background: var(--ok-f); }
-  .alerta strong { display: block; } .alerta ul { margin: 4px 0 0; padding-left: 20px; }
+  .alerta strong { display: flex; align-items: center; gap: 6px; } .alerta ul { margin: 4px 0 0; padding-left: 20px; }
   .alerta .link-btn { color: inherit; min-height: 32px; }
 
   label, legend { display: block; font-weight: 700; margin-bottom: 4px; }
@@ -94,10 +97,29 @@
   .etapas { margin-bottom: 16px; } .barra { height: 8px; background: var(--borda); border-radius: 4px; overflow: hidden; margin-top: 4px; } .barra div { height: 100%; background: var(--primaria); }
   .sessao { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 0; border-top: 1px solid var(--borda); }
   .hora { font-weight: 700; white-space: nowrap; }
+  table.dados { width: 100%; border-collapse: collapse; background: #fff; } table.dados th, table.dados td { text-align: left; padding: 8px; border-bottom: 1px solid var(--borda); }
+
+  /* calendário */
+  .cal-nav { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 8px 0; }
+  .cal-nav h2 { margin: 0; font-size: 20px; text-align: center; flex: 1; }
+  .cal-nav .btn { min-width: 48px; padding: 0 10px; }
+  table.cal { width: 100%; border-collapse: separate; border-spacing: 3px; table-layout: fixed; }
+  table.cal th { font-size: 14px; color: var(--texto-secundario); font-weight: 700; padding: 2px 0; }
+  table.cal td { padding: 0; vertical-align: top; }
+  .cal-dia { width: 100%; min-height: 62px; padding: 4px 2px; border: 1px solid var(--borda-campo); border-radius: 8px; background: #fff; color: var(--texto); font: inherit; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .cal-dia .num { font-weight: 700; font-size: 16px; line-height: 1.2; }
+  .cal-dia .marcas { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 1px 3px; font-size: 14px; font-weight: 700; line-height: 1; }
+  .cal-dia .marcas .ic { width: 14px; height: 14px; vertical-align: 0; }
+  .cal-dia.hoje { border: 3px solid var(--texto); }
+  .cal-dia.hoje .num { text-decoration: underline; text-underline-offset: 2px; }
+  .cal-dia.sobre { background: var(--aviso-f); color: var(--aviso-t); }
+  .cal-dia[aria-pressed="true"] { background: var(--primaria); color: #fff; border-color: var(--primaria-escura); }
+  .legenda { display: grid; gap: 6px; font-size: 14px; margin: 8px 0 0; }
+  .legenda li { display: flex; align-items: center; gap: 8px; }
 
   #toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: 76px; width: min(398px, calc(100vw - 32px)); background: #111827; color: #fff; padding: 8px 8px 8px 16px; border-radius: 10px; display: none; gap: 8px; align-items: center; z-index: 20; }
   #toast span { flex: 1; }
-  #toast button { background: none; border: 0; color: #BFDBFE; font: inherit; font-weight: 700; cursor: pointer; text-decoration: underline; min-height: 44px; min-width: 44px; padding: 0 8px; }
+  #toast button { background: none; border: 0; color: #BFDBFE; font: inherit; font-weight: 700; cursor: pointer; text-decoration: underline; min-height: 44px; min-width: 44px; padding: 0 8px; display: inline-flex; align-items: center; justify-content: center; }
   #toast button:focus-visible { outline-color: #fff; }
   dialog { border: 0; border-radius: 12px; padding: 24px; max-width: 360px; width: calc(100vw - 32px); } dialog::backdrop { background: rgba(0,0,0,.55); }
 </style>
@@ -107,30 +129,53 @@
 <div id="app">
   <header id="topo"></header>
   <main id="conteudo" tabindex="-1"></main>
-  <nav aria-label="Menu principal">
-    <a href="#inicio" data-sec="inicio"><span class="ic" aria-hidden="true">⌂</span>Início</a>
-    <a href="#atividades" data-sec="atividades"><span class="ic" aria-hidden="true">☰</span>Atividades</a>
-    <a href="#planejamento" data-sec="planejamento"><span class="ic" aria-hidden="true">▦</span>Planejamento</a>
-    <a href="#calendario" data-sec="calendario"><span class="ic" aria-hidden="true">▤</span>Calendário</a>
-  </nav>
+  <nav aria-label="Menu principal" id="menu"></nav>
 </div>
-<div id="toast" role="status" aria-live="polite"><span id="toast-txt"></span><button id="toast-desfazer" type="button">Desfazer</button><button id="toast-fechar" type="button" aria-label="Fechar mensagem">✕</button></div>
+<div id="toast" role="status" aria-live="polite"><span id="toast-txt"></span><button id="toast-desfazer" type="button">Desfazer</button><button id="toast-fechar" type="button" aria-label="Fechar mensagem"></button></div>
 <div id="anuncio" class="sr" aria-live="polite"></div>
 <dialog id="dlg" aria-labelledby="dlg-t" aria-describedby="dlg-p">
-  <h2 id="dlg-t" style="margin-top:0">Excluir atividade?</h2>
+  <h2 id="dlg-t" style="margin-top:0"></h2>
   <p id="dlg-p"></p>
-  <div class="acoes"><button class="btn perigo" id="dlg-sim" type="button"><span aria-hidden="true">🗑</span> Excluir atividade</button><button class="btn sec" id="dlg-nao" type="button">Cancelar</button></div>
+  <div class="acoes"><button class="btn perigo" id="dlg-sim" type="button"></button><button class="btn sec" id="dlg-nao" type="button">Cancelar</button></div>
 </dialog>
 
 <script>
+/* ================= Ícones (SVG lineares, decorativos: o significado está no texto) ================= */
+const ICONES = {
+  inicio: '<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/>',
+  atividades: '<path d="M9 6h12M9 12h12M9 18h12"/><path d="m3 6 1 1 2-2M3 12l1 1 2-2M3 18l1 1 2-2"/>',
+  planejamento: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  calendario: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  disciplinas: '<path d="M4 19V5a2 2 0 0 1 2-2h14v16H6a2 2 0 0 0-2 2zm0 0a2 2 0 0 0 2 2h14"/><path d="M8 7h8M8 11h6"/>',
+  progresso: '<path d="M4 4v16h16"/><path d="M8 16v-4M12 16V8M16 16v-6"/>',
+  mais: '<path d="M12 5v14M5 12h14"/>',
+  check: '<path d="m5 12.5 4.5 4.5L19 7"/>',
+  fechar: '<path d="M6 6l12 12M18 6 6 18"/>',
+  sucesso: '<circle cx="12" cy="12" r="9"/><path d="m8 12.5 3 3 5-6"/>',
+  erro: '<circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6"/>',
+  aviso: '<path d="M10.3 4.2 2.6 18a2 2 0 0 0 1.7 3h15.4a2 2 0 0 0 1.7-3L13.7 4.2a2 2 0 0 0-3.4 0z"/><path d="M12 9.5v4M12 17h.01"/>',
+  lixeira: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
+  editar: '<path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="m13.5 6.5 4 4"/>',
+  reabrir: '<path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/>',
+  voltar: '<path d="M19 12H5M11 6l-6 6 6 6"/>',
+  esquerda: '<path d="m15 6-6 6 6 6"/>', direita: '<path d="m9 6 6 6-6 6"/>',
+  cima: '<path d="m6 15 6-6 6 6"/>', baixo: '<path d="m6 9 6 6 6-6"/>',
+  entrega: '<path d="M5 21V4h11l-2 4 2 4H5"/>',
+  alta: '<path d="M12 4v10" stroke-width="3"/><path d="M12 19.5v.01" stroke-width="3.5"/>',
+  media: '<path d="M5 9h14M5 15h14" stroke-width="2.5"/>',
+  baixa: '<path d="M12 4v15M6 13l6 6 6-6" stroke-width="2.5"/>',
+};
+const ic = n => `<svg class="ic" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONES[n]}</svg>`;
+
 /* ================= Dados fictícios (sem backend) ================= */
 const HOJE = new Date(2026, 10, 16);   // seg, 16/11/2026 – data fixa para a demonstração
+const HOJE_ISO = "2026-11-16";
 const LIMITE_DIA = 3;                  // 3 ou mais entregas no mesmo dia = aviso de sobrecarga
 const LIMITE_ESTUDO = 180;             // mais de 3 h de estudo no dia = aviso de sobrecarga
 const PRIO = {
-  alta:  { sim: "!", nome: "Alta",  desc: "precisa de atenção imediata" },
-  media: { sim: "=", nome: "Média", desc: "importante, mas pode esperar um pouco" },
-  baixa: { sim: "↓", nome: "Baixa", desc: "pode ser feita depois" },
+  alta:  { nome: "Alta",  desc: "precisa de atenção imediata" },
+  media: { nome: "Média", desc: "importante, mas pode esperar um pouco" },
+  baixa: { nome: "Baixa", desc: "pode ser feita depois" },
 };
 const SEMANA = [
   { k: "seg", nome: "Segunda", data: "2026-11-16" }, { k: "ter", nome: "Terça", data: "2026-11-17" },
@@ -139,6 +184,8 @@ const SEMANA = [
   { k: "dom", nome: "Domingo", data: "2026-11-22" },
 ];
 const DIAS_CURTOS = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
+const DIAS_LONGOS = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
+const MESES = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
 
 let disciplinas = ["Matemática", "Português", "Física", "Biologia", "História", "Geografia", "Inglês"];
 let atividades = [
@@ -148,20 +195,25 @@ let atividades = [
   { id: 4, titulo: "Redação dissertativa", disc: "Português", tipo: "Trabalho", data: "2026-11-23", prio: "baixa", feita: false },
   { id: 5, titulo: "Vocabulário da unidade 3", disc: "Inglês", tipo: "Tarefa", data: "2026-11-17", prio: "baixa", feita: false },
   { id: 6, titulo: "Questionário de células", disc: "Biologia", tipo: "Tarefa", data: "2026-11-13", prio: "media", feita: true },
+  { id: 7, titulo: "Prova de cartografia", disc: "Geografia", tipo: "Prova", data: "2026-11-26", prio: "alta", feita: false },
+  { id: 8, titulo: "Seminário sobre ecologia", disc: "Biologia", tipo: "Trabalho", data: "2026-12-03", prio: "media", feita: false },
 ];
-let proxId = 100, ultimoCadastro = null;
+let proxId = 100, ultimoCadastro = null, editId = null, editandoDisc = null;
 let plano = null;                          // planejamento salvo
 let rasc = null;                           // planejamento em edição { disp: {seg:{ini,fim}}, sessoes: [] }
+let calMes = { y: 2026, m: 10 }, calSel = HOJE_ISO;
 
 /* ================= Utilitários ================= */
 const $ = s => document.querySelector(s);
 const main = $("#conteudo");
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const iso = (y, m, d) => `${y}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
 const toDate = s => { const [a, m, d] = s.split("-").map(Number); return new Date(a, m - 1, d); };
 const fmt = s => { const d = toDate(s); return `${DIAS_CURTOS[d.getDay()]}, ${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}`; };
+const fmtLongo = s => { const d = toDate(s); return `${DIAS_LONGOS[d.getDay()]}, ${d.getDate()} de ${MESES[d.getMonth()]}`; };
 const diasAte = s => Math.round((toDate(s) - HOJE) / 864e5);
-const quando = s => { const d = diasAte(s); return d < 0 ? `atrasada há ${-d} dia${d < -1 ? "s" : ""}` : d === 0 ? "hoje" : d === 1 ? "amanhã" : `em ${d} dias`; };
-const noDia = s => atividades.filter(a => a.data === s && !a.feita).length;
+const quando = s => { const d = diasAte(s); return d < 0 ? `há ${-d} dia${d < -1 ? "s" : ""}` : d === 0 ? "hoje" : d === 1 ? "amanhã" : `em ${d} dias`; };
+const noDia = (s, ignorar) => atividades.filter(a => a.data === s && !a.feita && a.id !== ignorar).length;
 const min = h => { const [a, b] = h.split(":").map(Number); return a * 60 + b; };
 const hhmm = m => `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`;
 const dur = m => m < 60 ? `${m} min` : `${Math.floor(m / 60)} h${m % 60 ? " " + (m % 60) + " min" : ""}`;
@@ -169,14 +221,17 @@ const dia = k => SEMANA.find(d => d.k === k);
 const clone = o => JSON.parse(JSON.stringify(o));
 const ir = h => { location.hash = h; };
 const anunciar = t => { const a = $("#anuncio"); a.textContent = ""; setTimeout(() => a.textContent = t, 50); };
-const tag = p => `<span class="tag ${p}"><span class="sr">Prioridade </span><span class="sim" aria-hidden="true">${PRIO[p].sim}</span> ${PRIO[p].nome}</span>`;
+const tag = p => `<span class="tag ${p}">${ic(p)}<span class="sr">Prioridade </span>${PRIO[p].nome}</span>`;
 const ordemPrio = p => ["alta", "media", "baixa"].indexOf(p);
 const ordenar = l => [...l].sort((x, y) => x.feita - y.feita || x.data.localeCompare(y.data) || ordemPrio(x.prio) - ordemPrio(y.prio));
 const pendentes = () => atividades.filter(a => !a.feita);
 const opcoesHora = (de, ate, sel) => { let o = ""; for (let m = de; m <= ate; m += 30) o += `<option value="${hhmm(m)}" ${sel === hhmm(m) ? "selected" : ""}>${hhmm(m)}</option>`; return o; };
+const sessoesNaData = s => { const d = SEMANA.find(x => x.data === s); return plano && d ? sessoesDoDia(plano, d.k) : []; };
+const diasSobrecarga = () => [...new Set(pendentes().map(a => a.data))].filter(d => noDia(d) >= LIMITE_DIA).sort();
 
 /* ---- Mensagem rápida (toast): não some enquanto o usuário interage com ela ---- */
 let desfazerFn = null, toastTimer = null;
+$("#toast-fechar").innerHTML = ic("fechar");
 const esconderToast = () => { $("#toast").style.display = "none"; clearTimeout(toastTimer); };
 const agendarToast = () => { clearTimeout(toastTimer); toastTimer = setTimeout(esconderToast, 10000); };
 function toast(txt, desfazer) {
@@ -193,39 +248,56 @@ $("#toast").addEventListener("focusout", agendarToast);
 $("#toast-desfazer").onclick = () => { if (desfazerFn) desfazerFn(); esconderToast(); anunciar("Ação desfeita."); };
 $("#toast-fechar").onclick = esconderToast;
 
+/* ---- Diálogo de confirmação reutilizável ---- */
+function confirmar({ titulo, texto, botao, acao }) {
+  $("#dlg-t").textContent = titulo; $("#dlg-p").textContent = texto;
+  $("#dlg-sim").innerHTML = ic("lixeira") + " " + esc(botao);
+  $("#dlg-sim").onclick = () => { $("#dlg").close(); acao(); };
+  $("#dlg").showModal();
+}
+$("#dlg-nao").onclick = () => $("#dlg").close();
+
 /* ---- Erros de formulário: resumo no topo + mensagem no campo + foco no 1º erro ---- */
 function limparErros() {
-  main.querySelectorAll(".msg-erro").forEach(e => e.textContent = "");
+  main.querySelectorAll(".msg-erro").forEach(e => e.innerHTML = "");
   main.querySelectorAll("[aria-invalid]").forEach(e => e.removeAttribute("aria-invalid"));
   const r = $("#resumo-erros"); if (r) r.innerHTML = "";
 }
-function mostrarErros(lista) {     // lista: [{ campo, msg }]
+const msgErro = (el, msg) => { el.innerHTML = msg ? `${ic("erro")} ${esc(msg)}` : ""; };
+function mostrarErros(lista) {     // lista: [{ campo, msg, rotulo }]
   limparErros();
   if (!lista.length) return true;
   lista.forEach(e => {
     const c = $("#" + e.campo); c.setAttribute("aria-invalid", "true");
-    const m = $("#e-" + e.campo); if (m) m.textContent = "✕ " + e.msg;
+    const m = $("#e-" + e.campo); if (m) msgErro(m, e.msg);
   });
-  $("#resumo-erros").innerHTML = `<div class="alerta erro" role="alert"><strong><span aria-hidden="true">✕</span> ${lista.length > 1 ? `Corrija ${lista.length} campos` : "Corrija 1 campo"} para continuar:</strong>
+  $("#resumo-erros").innerHTML = `<div class="alerta erro" role="alert"><strong>${ic("erro")} ${lista.length > 1 ? `Corrija ${lista.length} campos` : "Corrija 1 campo"} para continuar:</strong>
     <ul>${lista.map(e => `<li><button type="button" class="link-btn" data-focar="${e.campo}">${esc(e.rotulo || e.msg)}</button></li>`).join("")}</ul></div>`;
   focar(lista[0].campo);
   return false;
 }
 function focar(id) { const el = $("#" + id); (el.matches("fieldset, div") ? el.querySelector("input, select") : el).focus(); }
+function alertaFocado(tipo, titulo, texto) {
+  $("#resumo-erros").innerHTML = `<div class="alerta ${tipo}" role="alert" tabindex="-1"><strong>${ic(tipo === "erro" ? "erro" : "aviso")} ${titulo}</strong>${texto}</div>`;
+  $("#resumo-erros .alerta").focus();
+}
 
 /* ================= Componentes ================= */
 function cartao(a) {
-  return `<li class="card atv ${a.feita ? "feita" : ""} ${a.id === ultimoCadastro ? "novo" : ""}">
-    <div><h3>${esc(a.titulo)}</h3>
-      <p class="peq">${esc(a.tipo)} · ${esc(a.disc)}<br>Entrega: ${fmt(a.data)} (${quando(a.data)})</p>
-      ${a.feita ? '<span class="tag ok"><span aria-hidden="true">✓</span> Concluída</span>' : tag(a.prio)}
-      ${a.id === ultimoCadastro ? '<span class="tag info">Nova</span>' : ""}</div>
-    <div style="display:flex;flex-direction:column;gap:8px">
-      ${a.feita ? "" : `<button class="btn sec peq-btn" data-concluir="${a.id}" type="button"><span aria-hidden="true">✓</span> Concluir<span class="sr"> ${esc(a.titulo)}</span></button>`}
-      <button class="btn perigo peq-btn" data-excluir="${a.id}" type="button"><span aria-hidden="true">🗑</span> Excluir<span class="sr"> ${esc(a.titulo)}</span></button>
+  return `<li class="card ${a.feita ? "feita" : ""} ${a.id === ultimoCadastro ? "novo" : ""}">
+    <h3>${esc(a.titulo)}</h3>
+    <p class="peq" style="margin:4px 0 0">${esc(a.tipo)} · ${esc(a.disc)}<br>Entrega: ${fmt(a.data)} (${quando(a.data)})</p>
+    <div>${a.feita ? `<span class="tag ok">${ic("check")} Concluída</span>` : tag(a.prio)}${a.id === ultimoCadastro ? '<span class="tag info">Nova</span>' : ""}</div>
+    <div class="acoes-cartao">
+      ${a.feita ? `<button class="btn sec peq-btn" data-reabrir="${a.id}" type="button">${ic("reabrir")} Reabrir<span class="sr"> ${esc(a.titulo)}</span></button>`
+                : `<button class="btn sec peq-btn" data-concluir="${a.id}" type="button">${ic("check")} Concluir<span class="sr"> ${esc(a.titulo)}</span></button>`}
+      <button class="btn sec peq-btn" data-editar="${a.id}" type="button">${ic("editar")} Editar<span class="sr"> ${esc(a.titulo)}</span></button>
+      <button class="btn perigo peq-btn" data-excluir="${a.id}" type="button">${ic("lixeira")} Excluir<span class="sr"> ${esc(a.titulo)}</span></button>
     </div></li>`;
 }
 const opcoesDisc = sel => `<option value="">Selecione uma disciplina</option>` + disciplinas.map(d => `<option ${d === sel ? "selected" : ""}>${esc(d)}</option>`).join("");
+const botaoPainel = (id, painel, texto, aberto, cls = "link-btn") =>
+  `<button type="button" class="${cls}" id="${id}" data-toggle aria-expanded="${aberto}" aria-controls="${painel}">${texto} <span class="chev">${ic(aberto ? "cima" : "baixo")}</span></button>`;
 
 function etapas(n) {
   const nomes = ["Disponibilidade", "Sessões de estudo", "Revisão"];
@@ -238,6 +310,7 @@ function rotuloAlvo(s) {
 }
 const sessoesDoDia = (p, k) => p.sessoes.filter(s => s.dia === k).sort((a, b) => min(a.ini) - min(b.ini));
 const totalDia = (p, k) => sessoesDoDia(p, k).reduce((t, s) => t + s.dur, 0);
+const linhaSessao = (s, extra = "") => `<li class="sessao"><div><span class="hora">${s.ini}–${hhmm(min(s.ini) + s.dur)}</span><br>${esc(rotuloAlvo(s))}</div>${extra}</li>`;
 
 function cronograma(p, editavel) {
   const dias = SEMANA.filter(d => p.disp[d.k]);
@@ -245,9 +318,8 @@ function cronograma(p, editavel) {
     const ss = sessoesDoDia(p, d.k), t = totalDia(p, d.k);
     return `<li class="card"><h3>${d.nome}, ${fmt(d.data).slice(5)}</h3>
       <p class="peq">Disponível das ${p.disp[d.k].ini} às ${p.disp[d.k].fim} · ${ss.length ? "Total: " + dur(t) : "Sem sessões"}
-      ${t > LIMITE_ESTUDO ? `<br><strong style="color:var(--aviso-t)"><span aria-hidden="true">⚠</span> Acima de 3 h de estudo</strong>` : ""}</p>
-      ${ss.length ? `<ul class="limpa">${ss.map(s => `<li class="sessao"><div><span class="hora">${s.ini}–${hhmm(min(s.ini) + s.dur)}</span><br>${esc(rotuloAlvo(s))}</div>
-        ${editavel ? `<button class="btn perigo peq-btn" type="button" data-remover-sessao="${s.id}">Remover<span class="sr"> sessão de ${esc(rotuloAlvo(s))}, ${d.nome} às ${s.ini}</span></button>` : ""}</li>`).join("")}</ul>` : ""}
+      ${t > LIMITE_ESTUDO ? `<br><strong style="color:var(--aviso-t)">${ic("aviso")} Acima de 3 h de estudo</strong>` : ""}</p>
+      ${ss.length ? `<ul class="limpa">${ss.map(s => linhaSessao(s, editavel ? `<button class="btn perigo peq-btn" type="button" data-remover-sessao="${s.id}">${ic("lixeira")} Remover<span class="sr"> sessão de ${esc(rotuloAlvo(s))}, ${d.nome} às ${s.ini}</span></button>` : "")).join("")}</ul>` : ""}
     </li>`;
   }).join("")}</ul>`;
 }
@@ -272,89 +344,117 @@ function verificar(p) {
   return { conflitos, sobrecarga, provasSemEstudo };
 }
 
+/* Formulário de atividade: usado para cadastrar (Tarefa 1) e para editar */
+function formAtividade(a) {
+  const v = a || { titulo: "", disc: "", tipo: "Prova", data: "", prio: "media" };
+  return `<div id="resumo-erros"></div>
+    <form id="f-atv" novalidate>
+      <div class="campo"><label for="titulo">Título <span class="obrig">(obrigatório)</span></label>
+        <input type="text" id="titulo" required autocomplete="off" value="${esc(v.titulo)}" aria-describedby="d-titulo e-titulo">
+        <p id="d-titulo" class="peq" style="margin-top:4px">Exemplo: Trabalho de Física</p><p id="e-titulo" class="msg-erro"></p></div>
+
+      <div class="campo"><label for="disc">Disciplina <span class="obrig">(obrigatório)</span></label>
+        <select id="disc" required aria-describedby="e-disc">${opcoesDisc(v.disc)}</select><p id="e-disc" class="msg-erro"></p>
+        ${botaoPainel("btn-nova-disc", "painel-disc", `${ic("mais")} Minha disciplina não está na lista`, false)}
+        <div id="painel-disc" class="painel" role="region" aria-labelledby="btn-nova-disc" hidden>
+          <label for="nd-nome">Nome da nova disciplina</label>
+          <input type="text" id="nd-nome" aria-describedby="e-nd-nome"><p id="e-nd-nome" class="msg-erro"></p>
+          <button type="button" class="btn sec peq-btn" id="nd-add" style="margin-top:8px">${ic("mais")} Adicionar disciplina</button>
+        </div></div>
+
+      <fieldset id="tipo"><legend>Tipo de atividade</legend><div class="opcoes">
+        ${["Prova", "Trabalho", "Tarefa"].map(t => `<label><input type="radio" name="tipo" value="${t}" ${v.tipo === t ? "checked" : ""}>${t}</label>`).join("")}</div></fieldset>
+
+      <div class="campo"><label for="data">Data de entrega <span class="obrig">(obrigatório)</span></label>
+        <input type="date" id="data" required min="${HOJE_ISO}" value="${v.data}" aria-describedby="e-data"><p id="e-data" class="msg-erro"></p></div>
+
+      <fieldset id="prio"><legend>Prioridade</legend><div class="opcoes coluna">
+        ${Object.entries(PRIO).map(([k, p]) => `<label><input type="radio" name="prio" value="${k}" ${v.prio === k ? "checked" : ""}>
+          <span><span class="tag ${k}" style="margin:0">${ic(k)} ${p.nome}</span> <span class="peq">${p.desc}</span></span></label>`).join("")}</div></fieldset>
+
+      <div id="aviso-dia"></div>
+      <div class="acoes"><button class="btn prim" type="submit">${a ? "Salvar alterações" : "Salvar atividade"}</button><a class="btn sec" href="#atividades">Cancelar</a></div>
+    </form>`;
+}
+
 /* ================= Telas ================= */
 const telas = {
   inicio() {
     const pend = ordenar(pendentes());
     const urg = pend.filter(a => diasAte(a.data) <= 3);
-    const sobrec = [...new Set(pend.map(a => a.data))].filter(d => noDia(d) >= LIMITE_DIA);
     const feitas = atividades.filter(a => a.feita).length, total = atividades.length;
-    const hoje = plano ? sessoesDoDia(plano, "seg") : [];
+    const hoje = sessoesNaData(HOJE_ISO);
     return `<h1 tabindex="-1">Olá, Lucas</h1><p class="peq">Segunda-feira, 16 de novembro</p>
-      ${sobrec.map(d => `<div class="alerta aviso"><strong><span aria-hidden="true">⚠</span> Dia com muitas atividades</strong>${fmt(d)} tem ${noDia(d)} entregas ou provas. Que tal adiantar alguma?</div>`).join("")}
+      ${diasSobrecarga().map(d => `<div class="alerta aviso"><strong>${ic("aviso")} Dia com muitas atividades</strong>${fmt(d)} tem ${noDia(d)} entregas ou provas. Que tal adiantar alguma?
+        <div><button type="button" class="link-btn" data-ver-dia="${d}">${ic("calendario")} Ver ${fmt(d)} no calendário</button></div></div>`).join("")}
       <section class="card" aria-labelledby="t-prog"><h2 id="t-prog" style="margin-top:0;font-size:18px">Seu progresso</h2>
         <p>${feitas} de ${total} atividades concluídas · ${pend.length} pendentes</p>
         <div class="barra" role="progressbar" aria-label="Atividades concluídas" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="${feitas}"><div style="width:${feitas / total * 100}%"></div></div>
+        <a class="link-btn" href="#acompanhamento" style="margin-top:4px">${ic("progresso")} Ver acompanhamento completo</a>
       </section>
-      <div class="acoes" style="margin-top:0"><a class="btn prim" href="#nova-atividade"><span aria-hidden="true">＋</span> Nova atividade</a></div>
+      <div class="acoes" style="margin-top:0"><a class="btn prim" href="#nova-atividade">${ic("mais")} Nova atividade</a></div>
       <h2>Próximos 3 dias</h2>
       ${urg.length ? `<ul class="limpa">${urg.map(cartao).join("")}</ul>` : '<p class="peq">Nada com prazo próximo. Bom momento para adiantar conteúdo.</p>'}
       <h2>Estudos de hoje</h2>
       ${!plano ? `<div class="card"><p>Você ainda não tem um planejamento semanal de estudos.</p><a href="#planejamento">Criar planejamento semanal</a></div>`
-        : hoje.length ? `<ul class="limpa card">${hoje.map(s => `<li class="sessao"><div><span class="hora">${s.ini}–${hhmm(min(s.ini) + s.dur)}</span><br>${esc(rotuloAlvo(s))}</div></li>`).join("")}</ul>`
+        : hoje.length ? `<ul class="limpa card">${hoje.map(s => linhaSessao(s)).join("")}</ul>`
         : '<p class="peq">Nenhuma sessão de estudo planejada para hoje.</p>'}`;
   },
 
   atividades() {
     return `<h1 tabindex="-1">Atividades</h1>
-      <div class="acoes" style="margin:8px 0 16px"><a class="btn prim" href="#nova-atividade"><span aria-hidden="true">＋</span> Nova atividade</a>
-        <a class="btn sec" href="#disciplinas">Gerenciar disciplinas</a></div>
+      <div class="acoes" style="margin:8px 0 16px"><a class="btn prim" href="#nova-atividade">${ic("mais")} Nova atividade</a>
+        <a class="btn sec" href="#disciplinas">${ic("disciplinas")} Gerenciar disciplinas</a></div>
       <ul class="limpa">${ordenar(atividades).map(cartao).join("")}</ul>`;
   },
 
   /* ---------- Tarefa crítica 1: cadastrar e priorizar uma atividade (Alternativa B – tela única) ---------- */
   "nova-atividade"() {
-    return `<h1 tabindex="-1">Nova atividade</h1>
-      <p class="peq">Preencha as informações para cadastrar sua atividade.</p>
-      <div id="resumo-erros"></div>
-      <form id="f-atv" novalidate>
-        <div class="campo"><label for="titulo">Título <span class="obrig">(obrigatório)</span></label>
-          <input type="text" id="titulo" required autocomplete="off" aria-describedby="d-titulo e-titulo">
-          <p id="d-titulo" class="peq" style="margin-top:4px">Exemplo: Trabalho de Física</p><p id="e-titulo" class="msg-erro"></p></div>
+    editId = null;
+    return `<h1 tabindex="-1">Nova atividade</h1><p class="peq">Preencha as informações para cadastrar sua atividade.</p>` + formAtividade(null);
+  },
 
-        <div class="campo"><label for="disc">Disciplina <span class="obrig">(obrigatório)</span></label>
-          <select id="disc" required aria-describedby="e-disc">${opcoesDisc()}</select><p id="e-disc" class="msg-erro"></p>
-          <button type="button" class="link-btn" id="btn-nova-disc" aria-expanded="false" aria-controls="painel-disc"><span aria-hidden="true">＋</span> Minha disciplina não está na lista</button>
-          <div id="painel-disc" class="painel" role="region" aria-labelledby="btn-nova-disc" hidden>
-            <label for="nd-nome">Nome da nova disciplina</label>
-            <input type="text" id="nd-nome" aria-describedby="e-nd-nome"><p id="e-nd-nome" class="msg-erro"></p>
-            <button type="button" class="btn sec peq-btn" id="nd-add" style="margin-top:8px">Adicionar disciplina</button>
-          </div></div>
-
-        <fieldset id="tipo"><legend>Tipo de atividade</legend><div class="opcoes">
-          ${["Prova", "Trabalho", "Tarefa"].map((t, i) => `<label><input type="radio" name="tipo" value="${t}" ${i === 0 ? "checked" : ""}>${t}</label>`).join("")}</div></fieldset>
-
-        <div class="campo"><label for="data">Data de entrega <span class="obrig">(obrigatório)</span></label>
-          <input type="date" id="data" required min="2026-11-16" aria-describedby="e-data"><p id="e-data" class="msg-erro"></p></div>
-
-        <fieldset id="prio"><legend>Prioridade</legend><div class="opcoes coluna">
-          ${Object.entries(PRIO).map(([k, p]) => `<label><input type="radio" name="prio" value="${k}" ${k === "media" ? "checked" : ""}>
-            <span><span class="tag ${k}" style="margin:0"><span class="sim" aria-hidden="true">${p.sim}</span> ${p.nome}</span> <span class="peq">${p.desc}</span></span></label>`).join("")}</div></fieldset>
-
-        <div id="aviso-dia"></div>
-        <div class="acoes"><button class="btn prim" type="submit">Salvar atividade</button><a class="btn sec" href="#atividades">Cancelar</a></div>
-      </form>`;
+  "editar-atividade"() {
+    const a = atividades.find(x => x.id === editId);
+    if (!a) { setTimeout(() => ir("atividades")); return ""; }
+    return `<h1 tabindex="-1">Editar atividade</h1><p class="peq">Altere o que precisar e salve.</p>` + formAtividade(a);
   },
 
   "atividade-salva"() {
     const a = atividades.find(x => x.id === ultimoCadastro);
     if (!a) { setTimeout(() => ir("atividades")); return ""; }
-    return `<div class="alerta ok" role="status"><strong><span aria-hidden="true">✓</span> Atividade salva</strong>Ela já aparece na sua lista de atividades.</div>
+    return `<div class="alerta ok" role="status"><strong>${ic("sucesso")} Atividade salva</strong>Ela já aparece na sua lista de atividades e no calendário.</div>
       <h1 tabindex="-1">Atividade cadastrada</h1><p class="peq">Confira as informações:</p>
       <ul class="limpa">${cartao(a)}</ul>
-      <div class="acoes"><a class="btn prim" href="#atividades">Ver lista de atividades</a><a class="btn sec" href="#nova-atividade"><span aria-hidden="true">＋</span> Cadastrar outra atividade</a></div>`;
+      <div class="acoes"><a class="btn prim" href="#atividades">Ver lista de atividades</a><a class="btn sec" href="#nova-atividade">${ic("mais")} Cadastrar outra atividade</a></div>`;
   },
 
   disciplinas() {
     return `<h1 tabindex="-1">Disciplinas</h1>
       <div id="resumo-erros"></div>
       <form id="f-disc" novalidate class="card">
-        <label for="nova-disc">Nome da disciplina</label>
+        <label for="nova-disc">Nome da nova disciplina</label>
         <input type="text" id="nova-disc" aria-describedby="e-nova-disc"><p id="e-nova-disc" class="msg-erro"></p>
-        <button class="btn prim bloco" type="submit" style="margin-top:12px"><span aria-hidden="true">＋</span> Adicionar disciplina</button>
+        <button class="btn prim bloco" type="submit" style="margin-top:12px">${ic("mais")} Adicionar disciplina</button>
       </form>
-      <ul class="limpa">${disciplinas.map(d => { const n = pendentes().filter(a => a.disc === d).length;
-        return `<li class="card"><h3>${esc(d)}</h3><p class="peq">${n ? `${n} atividade${n > 1 ? "s" : ""} pendente${n > 1 ? "s" : ""}` : "Nenhuma atividade pendente"}</p></li>`; }).join("")}</ul>`;
+      <ul class="limpa">${disciplinas.map((d, i) => {
+        const lista = ordenar(atividades.filter(a => a.disc === d)), n = lista.filter(a => !a.feita).length;
+        if (editandoDisc === d) return `<li class="card"><form id="f-renomear" novalidate>
+            <label for="ren-nome">Novo nome para ${esc(d)}</label>
+            <input type="text" id="ren-nome" value="${esc(d)}" aria-describedby="e-ren-nome"><p id="e-ren-nome" class="msg-erro"></p>
+            <div class="acoes-cartao"><button class="btn prim peq-btn" type="submit">Salvar alterações</button><button class="btn sec peq-btn" type="button" data-cancelar-ren>Cancelar</button></div>
+          </form></li>`;
+        return `<li class="card"><h3>${esc(d)}</h3>
+          <p class="peq" style="margin:0">${n ? `${n} atividade${n > 1 ? "s" : ""} pendente${n > 1 ? "s" : ""}` : "Nenhuma atividade pendente"} · ${lista.length} no total</p>
+          ${botaoPainel("bd-" + i, "pd-" + i, `Ver atividades de ${esc(d)}`, false)}
+          <div id="pd-${i}" role="region" aria-labelledby="bd-${i}" hidden>
+            ${lista.length ? `<ul class="limpa">${lista.map(a => `<li class="sessao"><div><strong>${esc(a.titulo)}</strong><br><span class="peq">${esc(a.tipo)} · ${fmt(a.data)}</span></div>
+              ${a.feita ? `<span class="tag ok">${ic("check")} Concluída</span>` : tag(a.prio)}</li>`).join("")}</ul>` : '<p class="peq">Nenhuma atividade cadastrada nesta disciplina.</p>'}
+          </div>
+          <div class="acoes-cartao">
+            <button class="btn sec peq-btn" type="button" data-editar-disc="${esc(d)}">${ic("editar")} Editar<span class="sr"> ${esc(d)}</span></button>
+            <button class="btn perigo peq-btn" type="button" data-excluir-disc="${esc(d)}">${ic("lixeira")} Excluir<span class="sr"> ${esc(d)}</span></button>
+          </div></li>`; }).join("")}</ul>`;
   },
 
   /* ---------- Tarefa crítica 2: criar um planejamento semanal de estudos ---------- */
@@ -365,7 +465,7 @@ const telas = {
       <div class="acoes"><button class="btn prim" type="button" data-plano="novo">Criar planejamento semanal</button></div>`;
     return `<h1 tabindex="-1">Planejamento de Estudos</h1><p class="peq">Semana de 16 a 22/11</p>
       ${cronograma(plano, false)}
-      <div class="acoes"><button class="btn prim" type="button" data-plano="editar">Editar planejamento semanal</button></div>`;
+      <div class="acoes"><button class="btn prim" type="button" data-plano="editar">${ic("editar")} Editar planejamento semanal</button></div>`;
   },
 
   "plan-disp"() {
@@ -394,7 +494,7 @@ const telas = {
       <p class="peq">Adicione quantas sessões quiser. As atividades com prioridade alta aparecem primeiro.</p>
       <div id="resumo-erros"></div>
 
-      <button type="button" class="btn sec bloco" id="btn-pend" aria-expanded="true" aria-controls="painel-pend">Atividades pendentes (${pend.length}) <span aria-hidden="true" id="seta-pend">▲</span></button>
+      ${botaoPainel("btn-pend", "painel-pend", `${ic("atividades")} Atividades pendentes (${pend.length})`, true, "btn sec bloco")}
       <div id="painel-pend" role="region" aria-labelledby="btn-pend" style="margin-top:8px">
         <ul class="limpa">${pend.map(a => `<li class="card" style="padding:12px"><h3 style="font-size:16px">${esc(a.titulo)}</h3>
           <p class="peq" style="margin:0">${esc(a.disc)} · ${fmt(a.data)} (${quando(a.data)})</p>${tag(a.prio)}
@@ -416,7 +516,7 @@ const telas = {
             ${[30, 60, 90, 120].map(m => `<option value="${m}" ${m === 60 ? "selected" : ""}>${dur(m)}</option>`).join("")}</select></div>
         </div>
         <p id="e-s-ini" class="msg-erro"></p><p id="e-s-dur" class="msg-erro"></p>
-        <button class="btn sec bloco" type="submit"><span aria-hidden="true">＋</span> Adicionar sessão ao cronograma</button>
+        <button class="btn sec bloco" type="submit">${ic("mais")} Adicionar sessão ao cronograma</button>
       </form>
 
       <h2>Sessões adicionadas (${rasc.sessoes.length})</h2>
@@ -430,44 +530,125 @@ const telas = {
     const v = verificar(rasc);
     return etapas(3) + `<h1 tabindex="-1">Revise seu planejamento</h1>
       <div id="resumo-erros"></div>
-      ${v.conflitos.length ? `<div class="alerta erro"><strong><span aria-hidden="true">✕</span> ${v.conflitos.length} conflito${v.conflitos.length > 1 ? "s" : ""} de horário</strong>
+      ${v.conflitos.length ? `<div class="alerta erro"><strong>${ic("erro")} ${v.conflitos.length} conflito${v.conflitos.length > 1 ? "s" : ""} de horário</strong>
           <ul>${v.conflitos.map(c => `<li>${esc(c)}</li>`).join("")}</ul>Remova ou ajuste as sessões antes de salvar.</div>`
-        : `<div class="alerta ok"><strong><span aria-hidden="true">✓</span> Nenhum conflito de horário</strong>Todas as sessões estão dentro dos horários disponíveis.</div>`}
-      ${v.sobrecarga.length ? `<div class="alerta aviso"><strong><span aria-hidden="true">⚠</span> Risco de sobrecarga</strong>
+        : `<div class="alerta ok"><strong>${ic("sucesso")} Nenhum conflito de horário</strong>Todas as sessões estão dentro dos horários disponíveis.</div>`}
+      ${v.sobrecarga.length ? `<div class="alerta aviso"><strong>${ic("aviso")} Risco de sobrecarga</strong>
           <ul>${v.sobrecarga.map(c => `<li>${esc(c)}</li>`).join("")}</ul>Mais de 3 horas de estudo no dia, além das aulas, pode cansar. Considere distribuir melhor ou incluir pausas.</div>` : ""}
-      ${v.provasSemEstudo.length ? `<div class="alerta aviso"><strong><span aria-hidden="true">⚠</span> Prova sem estudo planejado</strong>
+      ${v.provasSemEstudo.length ? `<div class="alerta aviso"><strong>${ic("aviso")} Prova sem estudo planejado</strong>
           <ul>${v.provasSemEstudo.map(c => `<li>${esc(c)}</li>`).join("")}</ul></div>` : ""}
       <p>${rasc.sessoes.length} sessões · ${dur(rasc.sessoes.reduce((t, s) => t + s.dur, 0))} de estudo na semana</p>
       ${cronograma(rasc, true)}
-      <div class="acoes"><button class="btn prim" type="button" id="salvar-plano"><span aria-hidden="true">✓</span> Salvar planejamento</button>
+      <div class="acoes"><button class="btn prim" type="button" id="salvar-plano">${ic("check")} Salvar planejamento</button>
         <a class="btn sec" href="#plan-sessoes">Ajustar sessões</a></div>`;
   },
 
   "plano-salvo"() {
     if (!plano) { setTimeout(() => ir("planejamento")); return ""; }
-    return `<div class="alerta ok" role="status"><strong><span aria-hidden="true">✓</span> Planejamento salvo</strong>As sessões de cada dia aparecem na tela Início.</div>
+    return `<div class="alerta ok" role="status"><strong>${ic("sucesso")} Planejamento salvo</strong>As sessões aparecem no Início e no Calendário.</div>
       <h1 tabindex="-1">Seu planejamento da semana</h1>${cronograma(plano, false)}
-      <div class="acoes"><a class="btn prim" href="#inicio">Ir para o Início</a><a class="btn sec" href="#planejamento">Ver planejamento</a></div>`;
+      <div class="acoes"><a class="btn prim" href="#inicio">Ir para o Início</a><a class="btn sec" href="#calendario">${ic("calendario")} Ver no calendário</a></div>`;
   },
 
+  /* ---------- Calendário (HU07 e HU08) ---------- */
   calendario() {
+    const { y, m } = calMes;
+    const offset = new Date(y, m, 1).getDay(), total = new Date(y, m + 1, 0).getDate();
+    let celulas = Array(offset).fill("<td></td>");
+    for (let d = 1; d <= total; d++) {
+      const ds = iso(y, m, d);
+      const pend = noDia(ds), ses = sessoesNaData(ds), estudo = ses.reduce((t, s) => t + s.dur, 0);
+      const sobre = pend >= LIMITE_DIA || estudo > LIMITE_ESTUDO;
+      const desc = [ds === HOJE_ISO ? "hoje" : "", pend ? `${pend} entrega${pend > 1 ? "s" : ""} pendente${pend > 1 ? "s" : ""}` : "",
+                    ses.length ? `${ses.length} sessão${ses.length > 1 ? "ões" : ""} de estudo` : "", sobre ? "dia com sobrecarga" : ""].filter(Boolean).join(", ");
+      celulas.push(`<td><button type="button" class="cal-dia ${ds === HOJE_ISO ? "hoje" : ""} ${sobre ? "sobre" : ""}" data-dia="${ds}"
+        aria-pressed="${ds === calSel}" tabindex="${ds === calSel ? 0 : -1}" aria-label="${fmtLongo(ds)}${desc ? ": " + desc : ""}">
+        <span class="num">${d}</span><span class="marcas" aria-hidden="true">${pend ? ic("entrega") + pend : ""}${ses.length ? ic("planejamento") : ""}${sobre ? ic("aviso") : ""}</span></button></td>`);
+    }
+    while (celulas.length % 7) celulas.push("<td></td>");
+    const linhas = []; for (let i = 0; i < celulas.length; i += 7) linhas.push(`<tr>${celulas.slice(i, i + 7).join("")}</tr>`);
+
+    const atvs = ordenar(atividades.filter(a => a.data === calSel)), ses = sessoesNaData(calSel);
+    const sobreSel = noDia(calSel) >= LIMITE_DIA;
+    const doMes = pendentes().filter(a => a.data.startsWith(iso(y, m, 1).slice(0, 7)));
+    const sobreMes = diasSobrecarga().filter(d => d.startsWith(iso(y, m, 1).slice(0, 7)));
     return `<h1 tabindex="-1">Calendário</h1>
-      <div class="alerta aviso"><strong><span aria-hidden="true">⚠</span> Tela fora do escopo do protótipo</strong>O calendário não faz parte das duas tarefas críticas e aparece apenas no menu.</div>`;
+      <p class="peq">${doMes.length} entrega${doMes.length !== 1 ? "s" : ""} pendente${doMes.length !== 1 ? "s" : ""} neste mês${sobreMes.length ? ` · sobrecarga em ${sobreMes.map(fmt).join(", ")}` : ""}</p>
+      <div class="cal-nav">
+        <button type="button" class="btn sec peq-btn" data-mes="-1">${ic("esquerda")}<span class="sr">Mês anterior</span></button>
+        <h2 id="t-mes" aria-live="polite">${MESES[m][0].toUpperCase() + MESES[m].slice(1)} de ${y}</h2>
+        <button type="button" class="btn sec peq-btn" data-mes="1">${ic("direita")}<span class="sr">Próximo mês</span></button>
+      </div>
+      <p class="peq" id="dica-cal">Toque em um dia para ver os detalhes. No teclado, use as setas para mudar de dia.</p>
+      <table class="cal" aria-labelledby="t-mes" aria-describedby="dica-cal">
+        <thead><tr>${["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"].map(n => `<th scope="col" abbr="${n}">${n.slice(0, 3).toLowerCase()}</th>`).join("")}</tr></thead>
+        <tbody>${linhas.join("")}</tbody></table>
+      <ul class="limpa legenda" aria-label="Legenda">
+        <li>${ic("entrega")} Número de entregas pendentes</li>
+        <li>${ic("planejamento")} Sessão de estudo planejada</li>
+        <li>${ic("aviso")} Dia com sobrecarga (fundo amarelo)</li>
+        <li><span style="display:inline-block;width:18px;height:18px;border:3px solid var(--texto);border-radius:4px"></span> Hoje (borda grossa e número sublinhado)</li>
+      </ul>
+
+      <section aria-labelledby="t-dia" id="detalhe-dia">
+        <h2 id="t-dia">${fmtLongo(calSel)}${calSel === HOJE_ISO ? " (hoje)" : ""}</h2>
+        ${sobreSel ? `<div class="alerta aviso"><strong>${ic("aviso")} Dia com muitas atividades</strong>${noDia(calSel)} entregas ou provas neste dia. Considere adiantar alguma.</div>` : ""}
+        ${atvs.length ? `<h3 style="margin-bottom:8px">Entregas e provas</h3><ul class="limpa">${atvs.map(cartao).join("")}</ul>` : ""}
+        ${ses.length ? `<h3 style="margin:8px 0">Sessões de estudo</h3><ul class="limpa card">${ses.map(s => linhaSessao(s)).join("")}</ul>` : ""}
+        ${!atvs.length && !ses.length ? `<p class="peq">Nada marcado para este dia.</p>` : ""}
+        <div class="acoes" style="margin-top:8px"><a class="btn sec" href="#nova-atividade">${ic("mais")} Nova atividade</a></div>
+      </section>`;
+  },
+
+  /* ---------- Acompanhamento (HU10) ---------- */
+  acompanhamento() {
+    const feitas = atividades.filter(a => a.feita).length, total = atividades.length;
+    const sobreEnt = diasSobrecarga(), sobreEst = plano ? SEMANA.filter(d => totalDia(plano, d.k) > LIMITE_ESTUDO) : [];
+    const horas = plano ? disciplinas.map(d => [d, plano.sessoes.filter(s => s.disc === d).reduce((t, s) => t + s.dur, 0)]).filter(x => x[1]) : [];
+    return `<h1 tabindex="-1">Acompanhamento</h1>
+      <section class="card" aria-labelledby="t-geral"><h2 id="t-geral" style="margin-top:0;font-size:18px">Progresso geral</h2>
+        <p>${feitas} de ${total} atividades concluídas (${Math.round(feitas / total * 100)}%)</p>
+        <div class="barra" role="progressbar" aria-label="Atividades concluídas" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="${feitas}"><div style="width:${feitas / total * 100}%"></div></div></section>
+
+      <h2>Por disciplina</h2>
+      <table class="dados"><caption class="sr">Atividades concluídas e pendentes por disciplina</caption>
+        <thead><tr><th scope="col">Disciplina</th><th scope="col">Concluídas</th><th scope="col">Pendentes</th></tr></thead>
+        <tbody>${disciplinas.map(d => { const l = atividades.filter(a => a.disc === d);
+          return `<tr><th scope="row">${esc(d)}</th><td>${l.filter(a => a.feita).length}</td><td>${l.filter(a => !a.feita).length}</td></tr>`; }).join("")}</tbody></table>
+
+      <h2>Estudo planejado na semana</h2>
+      ${!plano ? `<p class="peq">Nenhum planejamento salvo.</p><a href="#planejamento">Criar planejamento semanal</a>`
+        : `<ul class="limpa card">${horas.map(([d, t]) => `<li class="sessao"><span>${esc(d)}</span><span class="hora">${dur(t)}</span></li>`).join("")}</ul>`}
+
+      <h2>Períodos de sobrecarga</h2>
+      ${sobreEnt.length || sobreEst.length ? `<div class="alerta aviso"><strong>${ic("aviso")} Atenção a estes dias</strong><ul>
+          ${sobreEnt.map(d => `<li>${fmt(d)}: ${noDia(d)} entregas ou provas</li>`).join("")}
+          ${sobreEst.map(d => `<li>${d.nome}: ${dur(totalDia(plano, d.k))} de estudo planejado</li>`).join("")}</ul></div>`
+        : `<div class="alerta ok"><strong>${ic("sucesso")} Nenhum período de sobrecarga</strong>Sua semana está equilibrada.</div>`}`;
   },
 };
 
 /* Cabeçalho: telas internas têm botão Voltar com destino explícito */
 const VOLTAR = {
-  "nova-atividade": ["#atividades", "Atividades"], "atividade-salva": ["#atividades", "Atividades"], disciplinas: ["#atividades", "Atividades"],
+  "nova-atividade": ["#atividades", "Atividades"], "editar-atividade": ["#atividades", "Atividades"], "atividade-salva": ["#atividades", "Atividades"],
+  disciplinas: ["#atividades", "Atividades"], acompanhamento: ["#inicio", "Início"],
   "plan-disp": ["#planejamento", "Planejamento"], "plan-sessoes": ["#plan-disp", "Disponibilidade"], "plan-revisao": ["#plan-sessoes", "Sessões"],
 };
-const SECAO = { "nova-atividade": "atividades", "atividade-salva": "atividades", disciplinas: "atividades", "plan-disp": "planejamento", "plan-sessoes": "planejamento", "plan-revisao": "planejamento", "plano-salvo": "planejamento" };
+const SECAO = { "nova-atividade": "atividades", "editar-atividade": "atividades", "atividade-salva": "atividades", disciplinas: "atividades", acompanhamento: "inicio",
+                "plan-disp": "planejamento", "plan-sessoes": "planejamento", "plan-revisao": "planejamento", "plano-salvo": "planejamento" };
+$("#menu").innerHTML = [["inicio", "Início"], ["atividades", "Atividades"], ["planejamento", "Planejamento"], ["calendario", "Calendário"]]
+  .map(([k, n]) => `<a href="#${k}" data-sec="${k}">${ic(k)}${n}</a>`).join("");
 
 /* ================= Eventos ================= */
 function atualizarInicios() {
   const d = $("#s-dia")?.value; if (!d) return;
   const r = rasc.disp[d], atual = $("#s-ini").value;
   $("#s-ini").innerHTML = opcoesHora(min(r.ini), min(r.fim) - 30, atual || r.ini);
+}
+function validarNomeDisc(nome, atual) {
+  if (!nome) return "Digite o nome da disciplina.";
+  if (disciplinas.some(d => d.toLowerCase() === nome.toLowerCase() && d !== atual)) return `${nome} já está na sua lista.`;
+  return "";
 }
 
 main.addEventListener("submit", ev => {
@@ -483,23 +664,38 @@ main.addEventListener("submit", ev => {
     else if (diasAte(data) < 0) erros.push({ campo: "data", msg: `A data ${fmt(data)} já passou. Escolha hoje (16/11) ou uma data futura.`, rotulo: "Data de entrega: a data já passou" });
     if (!mostrarErros(erros)) return;
     const aviso = $("#aviso-dia");
-    if (noDia(data) >= LIMITE_DIA && aviso.dataset.ok !== data) {
+    if (noDia(data, editId) >= LIMITE_DIA && aviso.dataset.ok !== data) {
       aviso.dataset.ok = data;
-      aviso.innerHTML = `<div class="alerta aviso" role="alert" tabindex="-1"><strong><span aria-hidden="true">⚠</span> ${fmt(data)} já tem ${noDia(data)} atividades</strong>Isso pode gerar sobrecarga. Você pode trocar a data ou salvar mesmo assim.</div>`;
+      aviso.innerHTML = `<div class="alerta aviso" role="alert" tabindex="-1"><strong>${ic("aviso")} ${fmt(data)} já tem ${noDia(data, editId)} atividades</strong>Isso pode gerar sobrecarga. Você pode trocar a data ou salvar mesmo assim.</div>`;
       f.querySelector("[type=submit]").textContent = "Salvar mesmo assim";
       aviso.firstChild.focus();
       return;
     }
-    ultimoCadastro = ++proxId;
-    atividades.push({ id: ultimoCadastro, titulo, disc, data, tipo: f.tipo.value, prio: f.prio.value, feita: false });
-    ir("atividade-salva");
+    const dados = { titulo, disc, data, tipo: f.tipo.value, prio: f.prio.value };
+    if (editId) {
+      Object.assign(atividades.find(a => a.id === editId), dados);
+      toast(`Alterações em “${titulo}” salvas.`); editId = null; ir("atividades");
+    } else {
+      ultimoCadastro = ++proxId;
+      atividades.push({ id: ultimoCadastro, ...dados, feita: false });
+      ir("atividade-salva");
+    }
   }
 
   if (f.id === "f-disc") {
-    const nome = $("#nova-disc").value.trim();
-    const erro = !nome ? "Digite o nome da disciplina." : disciplinas.some(d => d.toLowerCase() === nome.toLowerCase()) ? `${nome} já está na sua lista.` : "";
+    const nome = $("#nova-disc").value.trim(), erro = validarNomeDisc(nome);
     if (!mostrarErros(erro ? [{ campo: "nova-disc", msg: erro }] : [])) return;
     disciplinas.push(nome); render(false); toast(`Disciplina ${nome} adicionada.`); $("#nova-disc").focus();
+  }
+
+  if (f.id === "f-renomear") {
+    const antigo = editandoDisc, nome = $("#ren-nome").value.trim(), erro = validarNomeDisc(nome, antigo);
+    if (!mostrarErros(erro ? [{ campo: "ren-nome", msg: erro }] : [])) return;
+    disciplinas[disciplinas.indexOf(antigo)] = nome;
+    atividades.forEach(a => { if (a.disc === antigo) a.disc = nome; });
+    [plano, rasc].forEach(p => p && p.sessoes.forEach(s => { if (s.disc === antigo) { s.disc = nome; if (s.alvo === "d:" + antigo) s.alvo = "d:" + nome; } }));
+    editandoDisc = null; render(false); toast(`Disciplina renomeada para ${nome}.`);
+    $(`[data-editar-disc="${CSS.escape(nome)}"]`).focus();
   }
 
   if (f.id === "f-disp") {
@@ -537,44 +733,63 @@ main.addEventListener("click", ev => {
   const b = ev.target.closest("button"); if (!b) return;
   if (b.dataset.focar) focar(b.dataset.focar);
 
+  /* painéis recolhíveis: aria-expanded + aria-controls */
+  if (b.hasAttribute("data-toggle")) {
+    const aberto = b.getAttribute("aria-expanded") === "true", painel = $("#" + b.getAttribute("aria-controls"));
+    b.setAttribute("aria-expanded", String(!aberto)); painel.hidden = aberto;
+    b.querySelector(".chev").innerHTML = ic(aberto ? "baixo" : "cima");
+    if (!aberto) painel.querySelector("input")?.focus();
+  }
+
+  /* atividades */
   if (b.dataset.concluir) {
     const a = atividades.find(x => x.id == b.dataset.concluir); a.feita = true; render(false);
     toast(`“${a.titulo}” marcada como concluída.`, () => { a.feita = false; render(false); });
   }
+  if (b.dataset.reabrir) {
+    const a = atividades.find(x => x.id == b.dataset.reabrir); a.feita = false; render(false);
+    toast(`“${a.titulo}” voltou para as pendentes.`, () => { a.feita = true; render(false); });
+  }
+  if (b.dataset.editar) { editId = Number(b.dataset.editar); ir("editar-atividade"); }
   if (b.dataset.excluir) {
     const a = atividades.find(x => x.id == b.dataset.excluir);
-    $("#dlg-p").textContent = `“${a.titulo}” será removida da sua lista. Você poderá desfazer logo em seguida.`;
-    $("#dlg").showModal();
-    $("#dlg-sim").onclick = () => {
-      const pos = atividades.indexOf(a); atividades.splice(pos, 1); $("#dlg").close(); render(false);
-      toast(`Atividade “${a.titulo}” excluída.`, () => { atividades.splice(pos, 0, a); render(false); });
-    };
-  }
-
-  if (b.id === "btn-nova-disc") {
-    const aberto = b.getAttribute("aria-expanded") === "true";
-    b.setAttribute("aria-expanded", String(!aberto)); $("#painel-disc").hidden = aberto;
-    if (!aberto) $("#nd-nome").focus();
+    confirmar({ titulo: "Excluir atividade?", texto: `“${a.titulo}” será removida da sua lista. Você poderá desfazer logo em seguida.`, botao: "Excluir atividade",
+      acao: () => { const pos = atividades.indexOf(a); atividades.splice(pos, 1); render(false);
+        toast(`Atividade “${a.titulo}” excluída.`, () => { atividades.splice(pos, 0, a); render(false); }); } });
   }
   if (b.id === "nd-add") {     // HTA 1, plano 2: cadastrar a disciplina sem sair do formulário
-    const nome = $("#nd-nome").value.trim(), e = $("#e-nd-nome");
-    const erro = !nome ? "Digite o nome da disciplina." : disciplinas.some(d => d.toLowerCase() === nome.toLowerCase()) ? `${nome} já está na lista. Selecione-a acima.` : "";
-    e.textContent = erro ? "✕ " + erro : "";
+    const nome = $("#nd-nome").value.trim(), erro = validarNomeDisc(nome);
+    msgErro($("#e-nd-nome"), erro ? (erro.includes("já está") ? `${nome} já está na lista. Selecione-a acima.` : erro) : "");
     if (erro) { $("#nd-nome").setAttribute("aria-invalid", "true"); $("#nd-nome").focus(); return; }
     $("#nd-nome").removeAttribute("aria-invalid");
     disciplinas.push(nome);
     $("#disc").innerHTML = opcoesDisc(nome);
-    $("#nd-nome").value = ""; $("#painel-disc").hidden = true; $("#btn-nova-disc").setAttribute("aria-expanded", "false");
+    $("#nd-nome").value = ""; $("#painel-disc").hidden = true;
+    const bt = $("#btn-nova-disc"); bt.setAttribute("aria-expanded", "false"); bt.querySelector(".chev").innerHTML = ic("baixo");
     $("#disc").focus();
     toast(`Disciplina ${nome} adicionada e selecionada.`);
   }
 
-  if (b.id === "btn-pend") {   // painel recolhível com aria-expanded / aria-controls
-    const aberto = b.getAttribute("aria-expanded") === "true";
-    b.setAttribute("aria-expanded", String(!aberto)); $("#painel-pend").hidden = aberto; $("#seta-pend").textContent = aberto ? "▼" : "▲";
+  /* disciplinas */
+  if (b.dataset.editarDisc) { editandoDisc = b.dataset.editarDisc; render(false); $("#ren-nome").focus(); $("#ren-nome").select(); }
+  if (b.hasAttribute("data-cancelar-ren")) { const d = editandoDisc; editandoDisc = null; render(false); $(`[data-editar-disc="${CSS.escape(d)}"]`).focus(); }
+  if (b.dataset.excluirDisc) {
+    const d = b.dataset.excluirDisc, n = atividades.filter(a => a.disc === d).length;
+    confirmar({ titulo: `Excluir ${d}?`, botao: "Excluir disciplina",
+      texto: n > 1 ? `As ${n} atividades de ${d} também serão excluídas. Você poderá desfazer logo em seguida.`
+           : n === 1 ? `A atividade de ${d} também será excluída. Você poderá desfazer logo em seguida.` : `${d} será removida da sua lista.`,
+      acao: () => {
+        const antes = { disciplinas: [...disciplinas], atividades: clone(atividades), plano: clone(plano) };
+        disciplinas = disciplinas.filter(x => x !== d); atividades = atividades.filter(a => a.disc !== d);
+        if (plano) plano.sessoes = plano.sessoes.filter(s => s.disc !== d);
+        render(false);
+        toast(`Disciplina ${d} excluída.`, () => { disciplinas = antes.disciplinas; atividades = antes.atividades; plano = antes.plano; render(false); });
+        main.querySelector("h1").focus();
+      } });
   }
-  if (b.dataset.estudar) { $("#s-alvo").value = "a:" + b.dataset.estudar; $("#s-dia").focus(); anunciar("Atividade selecionada no formulário Nova sessão. Agora escolha o dia."); }
 
+  /* planejamento */
+  if (b.dataset.estudar) { $("#s-alvo").value = "a:" + b.dataset.estudar; $("#s-dia").focus(); anunciar("Atividade selecionada no formulário Nova sessão. Agora escolha o dia."); }
   if (b.dataset.plano) { rasc = b.dataset.plano === "editar" ? clone(plano) : { disp: {}, sessoes: [] }; ir("plan-disp"); }
   if (b.dataset.removerSessao) {
     const i = rasc.sessoes.findIndex(s => s.id == b.dataset.removerSessao), s = rasc.sessoes[i];
@@ -583,37 +798,54 @@ main.addEventListener("click", ev => {
     main.querySelector("h1").focus();
   }
   if (b.id === "ir-revisao") {
-    if (!rasc.sessoes.length) {
-      $("#resumo-erros").innerHTML = `<div class="alerta erro" role="alert" tabindex="-1"><strong><span aria-hidden="true">✕</span> Nenhuma sessão adicionada</strong>Adicione pelo menos uma sessão de estudo antes de revisar.</div>`;
-      $("#resumo-erros .alerta").focus(); return;
-    }
+    if (!rasc.sessoes.length) return alertaFocado("erro", "Nenhuma sessão adicionada", "Adicione pelo menos uma sessão de estudo antes de revisar.");
     ir("plan-revisao");
   }
   if (b.id === "salvar-plano") {
-    const v = verificar(rasc);
-    if (v.conflitos.length) {
-      $("#resumo-erros").innerHTML = `<div class="alerta erro" role="alert" tabindex="-1"><strong><span aria-hidden="true">✕</span> Não foi possível salvar</strong>Resolva os conflitos de horário indicados abaixo e tente novamente.</div>`;
-      $("#resumo-erros .alerta").focus(); return;
-    }
+    if (verificar(rasc).conflitos.length) return alertaFocado("erro", "Não foi possível salvar", "Resolva os conflitos de horário indicados abaixo e tente novamente.");
     plano = clone(rasc); rasc = null; ir("plano-salvo");
   }
+
+  /* calendário */
+  if (b.dataset.verDia) { calSel = b.dataset.verDia; const d = toDate(calSel); calMes = { y: d.getFullYear(), m: d.getMonth() }; ir("calendario"); }
+  if (b.dataset.dia) selecionarDia(b.dataset.dia);
+  if (b.dataset.mes) {
+    const d = new Date(calMes.y, calMes.m + Number(b.dataset.mes), 1);
+    calMes = { y: d.getFullYear(), m: d.getMonth() }; calSel = iso(calMes.y, calMes.m, 1);
+    render(false); $(`[data-mes="${b.dataset.mes}"]`).focus();
+  }
+});
+
+function selecionarDia(ds, focarDia = true) {
+  const d = toDate(ds);
+  calSel = ds; calMes = { y: d.getFullYear(), m: d.getMonth() };
+  render(false);
+  if (focarDia) $(`[data-dia="${ds}"]`).focus();
+}
+/* setas do teclado no calendário (foco itinerante) */
+main.addEventListener("keydown", ev => {
+  const b = ev.target.closest(".cal-dia"); if (!b) return;
+  const passo = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 }[ev.key]; if (!passo) return;
+  ev.preventDefault();
+  const d = toDate(b.dataset.dia); d.setDate(d.getDate() + passo);
+  selecionarDia(iso(d.getFullYear(), d.getMonth(), d.getDate()));
 });
 
 main.addEventListener("change", ev => {
   const t = ev.target;
-  if (t.id === "data") { const a = $("#aviso-dia"); a.innerHTML = ""; delete a.dataset.ok; $("#f-atv [type=submit]").textContent = "Salvar atividade"; }
+  if (t.id === "data") { const a = $("#aviso-dia"); a.innerHTML = ""; delete a.dataset.ok; $("#f-atv [type=submit]").textContent = editId ? "Salvar alterações" : "Salvar atividade"; }
   if (t.name === "dia" && t.type === "checkbox") { $("#h-" + t.value).hidden = !t.checked; t.setAttribute("aria-expanded", String(t.checked)); }
   if (t.id === "s-dia") { $("#s-ini").value = ""; atualizarInicios(); }
 });
-$("#dlg-nao").onclick = () => $("#dlg").close();
 
 /* ================= Navegação ================= */
 function render(focarTitulo) {
   const t = location.hash.slice(1) || "inicio";
   const nome = telas[t] ? t : "inicio";
+  if (nome !== "disciplinas") editandoDisc = null;
   main.innerHTML = telas[nome]();
   const v = VOLTAR[nome];
-  $("#topo").innerHTML = v ? `<a class="voltar" href="${v[0]}"><span aria-hidden="true">←</span>&nbsp;Voltar<span class="sr"> para ${v[1]}</span></a><span class="marca">Estuda+</span>`
+  $("#topo").innerHTML = v ? `<a class="voltar" href="${v[0]}">${ic("voltar")} Voltar<span class="sr"> para ${v[1]}</span></a><span class="marca">Estuda+</span>`
                            : `<span class="marca">Estuda+</span><span class="ola">seg, 16/11</span>`;
   const s = SECAO[nome] || nome;
   document.querySelectorAll("nav a").forEach(a => a.dataset.sec === s ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"));
