@@ -60,7 +60,8 @@
   .card.novo { border: 2px solid var(--primaria); }
   .acoes-cartao { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
   .acoes-cartao .separado { margin-left: auto; }        /* ação destrutiva afastada das demais */
-  .tag { display: inline-flex; align-items: center; gap: 4px; font-size: .875rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; margin: 4px 4px 0 0; }
+  .tag { display: inline-flex; align-items: center; gap: 4px; min-height: 26px; font-size: .875rem; font-weight: 700; line-height: 1.2; padding: 2px 8px; border-radius: 6px; margin: 4px 4px 0 0; vertical-align: middle; }
+  .tags { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 8px; } .tags .tag { margin: 0; }
   .tag.alta { color: var(--alta-t); background: var(--alta-f); }
   .tag.media { color: var(--media-t); background: var(--media-f); }
   .tag.baixa { color: var(--baixa-t); background: var(--baixa-f); }
@@ -94,7 +95,7 @@
 
   /* ===== Formulários ===== */
   label, legend { display: block; font-weight: 700; margin-bottom: 4px; }
-  .obrig { font-weight: 400; font-size: .875rem; color: var(--texto-secundario); }
+  .obrig { font-weight: 700; color: var(--erro-t); }
   .campo { margin-bottom: 20px; }
   input[type=text], input[type=date], select { width: 100%; min-height: 48px; padding: 8px 12px; font: inherit; border: 2px solid var(--borda-campo); border-radius: 8px; background: #fff; color: var(--texto); transition: border-color var(--rapido) ease-out; }
   input[type=text]:hover, input[type=date]:hover, select:hover { border-color: var(--texto); }
@@ -109,6 +110,13 @@
   .opcoes input, label.check input { width: 22px; height: 22px; accent-color: var(--primaria); flex: none; }
   .opcoes label:has(input:checked), label.check:has(input:checked) { border-color: var(--primaria); border-width: 3px; font-weight: 700; }
   .opcoes label:has(input:focus-visible), label.check:has(input:focus-visible) { outline: 3px solid var(--primaria-escura); outline-offset: 2px; }
+  /* prioridade: três opções lado a lado; o rádio fica oculto visualmente, mas continua acessível */
+  .opcoes.lado { flex-wrap: nowrap; }
+  .opcoes.lado label { flex: 1; justify-content: center; gap: 4px; padding: 8px 4px; position: relative; }
+  .opcoes.lado input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .opcoes.lado .tag { margin: 0; }
+  .opcoes.lado .marcado { display: none; color: var(--primaria); }
+  .opcoes.lado label:has(input:checked) .marcado { display: inline-flex; }
   .painel { border: 2px dashed var(--borda-campo); border-radius: 8px; padding: 12px; margin-top: 8px; }
   .dia-disp { border: 1px solid var(--borda); border-radius: 8px; padding: 12px; background: #fff; margin-bottom: 8px; }
   .dia-disp .horas { display: flex; gap: 12px; margin-top: 8px; } .dia-disp .horas > div { flex: 1; }
@@ -156,8 +164,12 @@
   .cal-dia.hoje .num { text-decoration: underline; text-underline-offset: 2px; }
   .cal-dia.sobre { background: var(--aviso-f); color: var(--aviso-t); }
   .cal-dia[aria-pressed="true"] { background: var(--primaria); color: #fff; border-color: var(--primaria-escura); }
-  .legenda { display: grid; gap: 6px; font-size: .875rem; margin: 8px 0 0; }
+  .legenda { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; font-size: .875rem; margin: 12px 0 0; }
   .legenda li { display: flex; align-items: center; gap: 8px; }
+  .amostra { display: inline-flex; align-items: center; justify-content: center; gap: 2px; min-width: 40px; height: 32px; padding: 0 4px; border: 1px solid var(--borda-campo); border-radius: 6px; background: #fff; font-weight: 700; flex: none; }
+  .amostra .ic { width: 14px; height: 14px; vertical-align: 0; }
+  .amostra.sobre { background: var(--aviso-f); color: var(--aviso-t); }
+  .amostra.hoje { border: 3px solid var(--texto); text-decoration: underline; }
 
   /* toast e diálogo */
   #toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: 76px; width: min(398px, calc(100vw - 32px)); background: #111827; color: #fff; padding: 8px 8px 8px 16px; border-radius: 10px; display: none; gap: 8px; align-items: center; z-index: 20; }
@@ -223,22 +235,23 @@ const ICONES = {
 const ic = n => `<svg class="ic" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONES[n]}</svg>`;
 
 /* ---------- Constantes ---------- */
-const HOJE = new Date(2026, 10, 16), HOJE_ISO = "2026-11-16";   // data fixa da demonstração
+const HOJE = new Date(2026, 11, 3), HOJE_ISO = "2026-12-03";    // data fixa: dia da apresentação (qui, 03/12/2026)
 const LIMITE_DIA = 3;          // 3 ou mais entregas no mesmo dia = sobrecarga
 const LIMITE_ESTUDO = 180;     // mais de 3 h de estudo no dia = sobrecarga
 const LIMITE_SUGESTAO = 120;   // a sugestão automática não passa de 2 h por dia
-const CHAVE = "estudamais-prototipo-v1";
+const CHAVE = "estudamais-prototipo-v2";
+const OBRIG = '<span class="obrig" aria-hidden="true">*</span>';   // campo com required: o leitor de tela anuncia "obrigatório"
 const PRIO = {
   alta:  { nome: "Alta",  desc: "precisa de atenção imediata" },
   media: { nome: "Média", desc: "importante, mas pode esperar um pouco" },
   baixa: { nome: "Baixa", desc: "pode ser feita depois" },
 };
-const SEMANA = [
-  { k: "seg", nome: "Segunda", data: "2026-11-16" }, { k: "ter", nome: "Terça", data: "2026-11-17" },
-  { k: "qua", nome: "Quarta", data: "2026-11-18" },  { k: "qui", nome: "Quinta", data: "2026-11-19" },
-  { k: "sex", nome: "Sexta", data: "2026-11-20" },   { k: "sab", nome: "Sábado", data: "2026-11-21" },
-  { k: "dom", nome: "Domingo", data: "2026-11-22" },
-];
+/* semana do planejamento: os 7 dias a partir de hoje (qui 03/12 a qua 09/12) */
+const SEMANA = Array.from({ length: 7 }, (_, i) => {
+  const d = new Date(HOJE); d.setDate(d.getDate() + i);
+  return { k: ["dom", "seg", "ter", "qua", "qui", "sex", "sab"][d.getDay()], nome: ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"][d.getDay()],
+           data: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}` };
+});
 const DIAS_CURTOS = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
 const DIAS_LONGOS = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
 const MESES = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
@@ -247,14 +260,14 @@ const MESES = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julh
 const exemplo = () => ({
   disciplinas: ["Matemática", "Português", "Física", "Biologia", "História", "Geografia", "Inglês"],
   atividades: [
-    { id: 1, titulo: "Prova de funções", disc: "Matemática", tipo: "Prova", data: "2026-11-19", prio: "alta", feita: false },
-    { id: 2, titulo: "Trabalho sobre Revolução Francesa", disc: "História", tipo: "Trabalho", data: "2026-11-19", prio: "media", feita: false },
-    { id: 3, titulo: "Lista de exercícios de cinemática", disc: "Física", tipo: "Tarefa", data: "2026-11-19", prio: "media", feita: false },
-    { id: 4, titulo: "Redação dissertativa", disc: "Português", tipo: "Trabalho", data: "2026-11-23", prio: "baixa", feita: false },
-    { id: 5, titulo: "Vocabulário da unidade 3", disc: "Inglês", tipo: "Tarefa", data: "2026-11-17", prio: "baixa", feita: false },
-    { id: 6, titulo: "Questionário de células", disc: "Biologia", tipo: "Tarefa", data: "2026-11-13", prio: "media", feita: true },
-    { id: 7, titulo: "Prova de cartografia", disc: "Geografia", tipo: "Prova", data: "2026-11-26", prio: "alta", feita: false },
-    { id: 8, titulo: "Seminário sobre ecologia", disc: "Biologia", tipo: "Trabalho", data: "2026-12-03", prio: "media", feita: false },
+    { id: 1, titulo: "Prova de funções", disc: "Matemática", tipo: "Prova", data: "2026-12-07", prio: "alta", feita: false },
+    { id: 2, titulo: "Trabalho sobre Revolução Francesa", disc: "História", tipo: "Trabalho", data: "2026-12-07", prio: "media", feita: false },
+    { id: 3, titulo: "Lista de exercícios de cinemática", disc: "Física", tipo: "Tarefa", data: "2026-12-07", prio: "media", feita: false },
+    { id: 4, titulo: "Redação dissertativa", disc: "Português", tipo: "Trabalho", data: "2026-12-10", prio: "baixa", feita: false },
+    { id: 5, titulo: "Vocabulário da unidade 3", disc: "Inglês", tipo: "Tarefa", data: "2026-12-04", prio: "baixa", feita: false },
+    { id: 6, titulo: "Questionário de células", disc: "Biologia", tipo: "Tarefa", data: "2026-11-30", prio: "media", feita: true },
+    { id: 7, titulo: "Prova de cartografia", disc: "Geografia", tipo: "Prova", data: "2026-12-14", prio: "alta", feita: false },
+    { id: 8, titulo: "Seminário sobre ecologia", disc: "Biologia", tipo: "Trabalho", data: "2026-12-18", prio: "media", feita: false },
   ],
   plano: null,            // planejamento salvo
   rasc: null,             // planejamento em edição (rascunho)
@@ -267,7 +280,7 @@ let E = exemplo();
 try { const s = JSON.parse(localStorage.getItem(CHAVE)); if (s && Array.isArray(s.atividades)) E = { ...E, ...s, prefs: { ...E.prefs, ...s.prefs } }; } catch (e) { /* sem armazenamento: segue com o exemplo */ }
 const salvar = () => { try { localStorage.setItem(CHAVE, JSON.stringify(E)); } catch (e) { } };
 let ultimoCadastro = null, editId = null, editandoDisc = null;
-let calMes = { y: 2026, m: 10 }, calSel = HOJE_ISO;
+let calMes = { y: HOJE.getFullYear(), m: HOJE.getMonth() }, calSel = HOJE_ISO;
 
 /* ---------- Utilitários ---------- */
 const $ = s => document.querySelector(s);
@@ -358,7 +371,7 @@ function cartao(a) {
   return `<li class="card ${a.feita ? "feita" : ""} ${a.id === ultimoCadastro ? "novo" : ""}">
     <h3>${esc(a.titulo)}</h3>
     <p class="peq" style="margin:4px 0 0">${esc(a.tipo)} · ${esc(a.disc)}<br>Entrega: ${fmt(a.data)} (${quando(a.data)})</p>
-    <div>${a.feita ? `<span class="tag ok">${ic("check")} Concluída</span>` : tag(a.prio)}${a.id === ultimoCadastro ? '<span class="tag info">Nova</span>' : ""}</div>
+    <div class="tags">${a.feita ? `<span class="tag ok">${ic("check")} Concluída</span>` : tag(a.prio)}${a.id === ultimoCadastro ? '<span class="tag info">Nova</span>' : ""}</div>
     <div class="acoes-cartao">
       ${a.feita ? `<button class="btn sec peq-btn" data-reabrir="${a.id}" type="button">${ic("reabrir")} Reabrir<span class="sr"> ${esc(a.titulo)}</span></button>`
                 : `<button class="btn sec peq-btn" data-concluir="${a.id}" type="button">${ic("check")} Concluir<span class="sr"> ${esc(a.titulo)}</span></button>`}
@@ -443,11 +456,12 @@ function formAtividade(a) {
   const v = a || { titulo: "", disc: "", tipo: "Prova", data: "", prio: "media" };
   return `<div id="resumo-erros"></div>
     <form id="f-atv" novalidate>
-      <div class="campo"><label for="titulo">Título <span class="obrig">(obrigatório)</span></label>
-        <input type="text" id="titulo" required autocomplete="off" value="${esc(v.titulo)}" aria-describedby="d-titulo e-titulo">
-        <p id="d-titulo" class="peq" style="margin-top:4px">Exemplo: Trabalho de Física</p><p id="e-titulo" class="msg-erro"></p></div>
+      <p class="peq">${OBRIG} Campo obrigatório</p>
+      <div class="campo"><label for="titulo">Título ${OBRIG}</label>
+        <input type="text" id="titulo" required autocomplete="off" value="${esc(v.titulo)}" aria-describedby="e-titulo">
+        <p id="e-titulo" class="msg-erro"></p></div>
 
-      <div class="campo"><label for="disc">Disciplina <span class="obrig">(obrigatório)</span></label>
+      <div class="campo"><label for="disc">Disciplina ${OBRIG}</label>
         <select id="disc" required aria-describedby="e-disc">${opcoesDisc(v.disc)}</select><p id="e-disc" class="msg-erro"></p>
         ${botaoPainel("btn-nova-disc", "painel-disc", `${ic("mais")} Minha disciplina não está na lista`, false)}
         <div id="painel-disc" class="painel" role="region" aria-labelledby="btn-nova-disc" hidden>
@@ -459,13 +473,13 @@ function formAtividade(a) {
       <fieldset id="tipo"><legend>Tipo de atividade</legend><div class="opcoes">
         ${["Prova", "Trabalho", "Tarefa"].map(t => `<label><input type="radio" name="tipo" value="${t}" ${v.tipo === t ? "checked" : ""}>${t}</label>`).join("")}</div></fieldset>
 
-      <div class="campo"><label for="data">Data de entrega <span class="obrig">(obrigatório)</span></label>
+      <div class="campo"><label for="data">Data de entrega ${OBRIG}</label>
         <input type="date" id="data" required min="${HOJE_ISO}" value="${v.data}" aria-describedby="e-data"><p id="e-data" class="msg-erro"></p></div>
       <div id="aviso-dia" aria-live="polite"></div>
 
-      <fieldset id="prio"><legend>Prioridade</legend><div class="opcoes coluna">
+      <fieldset id="prio"><legend>Prioridade</legend><div class="opcoes lado">
         ${Object.entries(PRIO).map(([k, p]) => `<label><input type="radio" name="prio" value="${k}" ${v.prio === k ? "checked" : ""}>
-          <span><span class="tag ${k}" style="margin:0">${ic(k)} ${p.nome}</span> <span class="peq">${p.desc}</span></span></label>`).join("")}</div></fieldset>
+          <span class="marcado" aria-hidden="true">${ic("check")}</span><span class="tag ${k}">${ic(k)} ${p.nome}</span></label>`).join("")}</div></fieldset>
 
       <div class="acoes"><button class="btn prim" type="submit">${a ? "Salvar alterações" : "Salvar atividade"}</button><a class="btn neutro" href="#atividades">Cancelar</a></div>
     </form>`;
@@ -475,7 +489,7 @@ function avisarData() {
   const data = $("#data").value, aviso = $("#aviso-dia"), btn = $("#f-atv [type=submit]");
   aviso.innerHTML = ""; delete aviso.dataset.ok; btn.textContent = editId ? "Salvar alterações" : "Salvar atividade";
   if (!data) return;
-  if (diasAte(data) < 0) { msgErro($("#e-data"), `A data ${fmt(data)} já passou. Escolha hoje (16/11) ou uma data futura.`); $("#data").setAttribute("aria-invalid", "true"); return; }
+  if (diasAte(data) < 0) { msgErro($("#e-data"), `A data ${fmt(data)} já passou. Escolha hoje (${fmt(HOJE_ISO).slice(5)}) ou uma data futura.`); $("#data").setAttribute("aria-invalid", "true"); return; }
   msgErro($("#e-data"), ""); $("#data").removeAttribute("aria-invalid");
   if (noDia(data, editId) >= LIMITE_DIA) {
     aviso.dataset.ok = data;
@@ -494,7 +508,6 @@ const telas = {
         <li class="card"><h3>${ic("planejamento")} 2. Monte seu planejamento semanal</h3><p class="peq" style="margin:4px 0 0">Informe quando você pode estudar e distribua as sessões. O app pode sugerir para você.</p></li>
         <li class="card"><h3>${ic("aviso")} 3. Receba avisos antes de sobrecarregar</h3><p class="peq" style="margin:4px 0 0">O app avisa quando um dia tiver muitas entregas ou estudo demais.</p></li>
       </ol>
-      <div class="alerta info"><strong>${ic(  "alta")} Prioridades sempre com nome</strong>Alta, Média e Baixa aparecem com ícone e palavra, nunca só com cor.</div>
       <div class="acoes"><button type="button" class="btn prim" data-comecar>Começar a usar o Estuda+</button>
         <a class="link-btn" href="#ajuda" data-comecar-ajuda>${ic("ajuda")} Ver a ajuda completa</a></div>`;
   },
@@ -503,7 +516,7 @@ const telas = {
     const pend = ordenar(pendentes()), urg = pend.filter(a => diasAte(a.data) <= 3);
     const feitas = E.atividades.filter(a => a.feita).length, total = E.atividades.length || 1;
     const hoje = sessoesNaData(HOJE_ISO);
-    return `<h1 tabindex="-1">Olá, Lucas</h1><p class="peq">Segunda-feira, 16 de novembro</p>
+    return `<h1 tabindex="-1">Olá, Lucas</h1><p class="peq">${fmtLongo(HOJE_ISO)}</p>
       ${diasSobrecarga().map(d => `<div class="alerta aviso"><strong>${ic("aviso")} Dia com muitas atividades</strong>${fmt(d)} tem ${noDia(d)} entregas ou provas. Que tal adiantar alguma?
         <div><button type="button" class="link-btn" data-ver-dia="${d}">${ic("calendario")} Ver ${fmt(d)} no calendário</button></div></div>`).join("")}
       <div class="acoes" style="margin-top:0"><a class="btn prim" href="#nova-atividade">${ic("mais")} Nova atividade</a></div>
@@ -597,7 +610,7 @@ const telas = {
       ${E.rasc ? "" : `<div class="card"><p>Você ainda não tem um planejamento para esta semana.</p>
       <p class="peq">Você vai informar quando pode estudar e montar suas sessões de estudo. Leva cerca de 3 minutos.</p></div>
       <div class="acoes"><button class="btn prim" type="button" data-plano="novo">Criar planejamento semanal</button></div>`}`;
-    return `<h1 tabindex="-1">Planejamento de Estudos</h1><p class="peq">Semana de 16 a 22/11</p>${rascunho}
+    return `<h1 tabindex="-1">Planejamento de Estudos</h1><p class="peq">Semana de ${fmt(SEMANA[0].data).slice(5)} a ${fmt(SEMANA[6].data).slice(5)}</p>${rascunho}
       ${cronograma(E.plano, false)}
       ${E.rasc ? "" : `<div class="acoes"><button class="btn prim" type="button" data-plano="editar">${ic("editar")} Editar planejamento semanal</button></div>`}`;
   },
@@ -608,7 +621,7 @@ const telas = {
       <p class="peq">Marque os dias e informe o horário em que está livre.</p>
       <div id="resumo-erros"></div>
       <form id="f-disp" novalidate>
-        <fieldset id="dias" aria-describedby="e-dias"><legend>Dias disponíveis <span class="obrig">(marque pelo menos um)</span></legend>
+        <fieldset id="dias" aria-describedby="e-dias"><legend>Dias disponíveis ${OBRIG}</legend>
           ${SEMANA.map(d => { const v = E.rasc.disp[d.k], ini = v ? v.ini : "19:00";
             return `<div class="dia-disp"><div class="opcoes"><label style="flex:1"><input type="checkbox" name="dia" value="${d.k}" ${v ? "checked" : ""} aria-controls="h-${d.k}" aria-expanded="${!!v}">${d.nome}</label></div>
               <div class="horas" id="h-${d.k}" ${v ? "" : "hidden"}>
@@ -640,8 +653,8 @@ const telas = {
 
       <form id="f-sessao" novalidate class="card" style="margin-top:16px" aria-labelledby="t-nova-sessao">
         <h2 id="t-nova-sessao" style="margin-top:0">Nova sessão</h2>
-        <div class="campo"><label for="s-alvo">O que estudar <span class="obrig">(obrigatório)</span></label>
-          <select id="s-alvo" aria-describedby="e-s-alvo"><option value="">Selecione</option>
+        <div class="campo"><label for="s-alvo">O que estudar ${OBRIG}</label>
+          <select id="s-alvo" required aria-describedby="e-s-alvo"><option value="">Selecione</option>
             <optgroup label="Atividades pendentes">${pend.map(a => `<option value="a:${a.id}">${esc(a.disc)}: ${esc(a.titulo)}</option>`).join("")}</optgroup>
             <optgroup label="Revisão geral da disciplina">${E.disciplinas.map(d => `<option value="d:${esc(d)}">${esc(d)}</option>`).join("")}</optgroup>
           </select><p id="e-s-alvo" class="msg-erro"></p></div>
@@ -705,24 +718,22 @@ const telas = {
     while (celulas.length % 7) celulas.push("<td></td>");
     const linhas = []; for (let i = 0; i < celulas.length; i += 7) linhas.push(`<tr>${celulas.slice(i, i + 7).join("")}</tr>`);
     const atvs = ordenar(E.atividades.filter(a => a.data === calSel)), ses = sessoesNaData(calSel);
-    const mes = iso(y, m, 1).slice(0, 7), doMes = pendentes().filter(a => a.data.startsWith(mes)), sobreMes = diasSobrecarga().filter(d => d.startsWith(mes));
     return `<h1 tabindex="-1">Calendário</h1>
-      <p class="peq">${doMes.length} entrega${doMes.length !== 1 ? "s" : ""} pendente${doMes.length !== 1 ? "s" : ""} neste mês${sobreMes.length ? ` · sobrecarga em ${sobreMes.map(fmt).join(", ")}` : ""}</p>
       ${dica("calendario", "Toque em um dia para ver as entregas e sessões dele. Dias com fundo amarelo e ícone de aviso estão sobrecarregados.")}
       <div class="cal-nav">
         <button type="button" class="btn neutro peq-btn" data-mes="-1">${ic("esquerda")}<span class="sr">Mês anterior</span></button>
         <h2 id="t-mes" aria-live="polite">${MESES[m][0].toUpperCase() + MESES[m].slice(1)} de ${y}</h2>
         <button type="button" class="btn neutro peq-btn" data-mes="1">${ic("direita")}<span class="sr">Próximo mês</span></button>
       </div>
-      <p class="peq" id="dica-cal">No teclado, use as setas para mudar de dia.</p>
+      <p class="sr" id="dica-cal">No teclado, use as setas para mudar de dia.</p>
       <table class="cal" aria-labelledby="t-mes" aria-describedby="dica-cal">
         <thead><tr>${["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"].map(n => `<th scope="col" abbr="${n}">${n.slice(0, 3).toLowerCase()}</th>`).join("")}</tr></thead>
         <tbody>${linhas.join("")}</tbody></table>
-      <ul class="limpa legenda" aria-label="Legenda">
-        <li>${ic("entrega")} Número de entregas pendentes</li>
-        <li>${ic("planejamento")} Sessão de estudo planejada</li>
-        <li>${ic("aviso")} Dia com sobrecarga (fundo amarelo)</li>
-        <li><span style="display:inline-block;width:18px;height:18px;border:3px solid var(--texto);border-radius:4px"></span> Hoje (borda grossa e número sublinhado)</li>
+      <ul class="limpa legenda" aria-label="Legenda do calendário">
+        <li><span class="amostra" aria-hidden="true">${ic("entrega")}2</span> Entregas pendentes</li>
+        <li><span class="amostra" aria-hidden="true">${ic("planejamento")}</span> Sessão de estudo</li>
+        <li><span class="amostra sobre" aria-hidden="true">${ic("aviso")}</span> Sobrecarga</li>
+        <li><span class="amostra hoje" aria-hidden="true">${HOJE.getDate()}</span> Hoje</li>
       </ul>
       <section aria-labelledby="t-dia" id="detalhe-dia">
         <h2 id="t-dia">${fmtLongo(calSel)}${calSel === HOJE_ISO ? " (hoje)" : ""}</h2>
@@ -822,10 +833,10 @@ main.addEventListener("submit", ev => {
   if (f.id === "f-atv") {
     const titulo = $("#titulo").value.trim(), disc = $("#disc").value, data = $("#data").value;
     const erros = [];
-    if (!titulo) erros.push({ campo: "titulo", msg: "Informe o título da atividade. Exemplo: Trabalho de Física.", rotulo: "Título: informe o título" });
-    if (!disc) erros.push({ campo: "disc", msg: "Escolha a disciplina. Se ela não estiver na lista, use “Minha disciplina não está na lista”.", rotulo: "Disciplina: escolha uma opção" });
+    if (!titulo) erros.push({ campo: "titulo", msg: "Informe o título.", rotulo: "Título: informe o título" });
+    if (!disc) erros.push({ campo: "disc", msg: "Escolha a disciplina.", rotulo: "Disciplina: escolha uma opção" });
     if (!data) erros.push({ campo: "data", msg: "Informe a data de entrega.", rotulo: "Data de entrega: informe a data" });
-    else if (diasAte(data) < 0) erros.push({ campo: "data", msg: `A data ${fmt(data)} já passou. Escolha hoje (16/11) ou uma data futura.`, rotulo: "Data de entrega: a data já passou" });
+    else if (diasAte(data) < 0) erros.push({ campo: "data", msg: `A data ${fmt(data)} já passou. Escolha hoje (${fmt(HOJE_ISO).slice(5)}) ou uma data futura.`, rotulo: "Data de entrega: a data já passou" });
     if (!mostrarErros(erros)) return;
     const aviso = $("#aviso-dia");
     if (noDia(data, editId) >= LIMITE_DIA && aviso.dataset.ok !== data) { avisarData(); aviso.querySelector(".alerta")?.setAttribute("tabindex", "-1"); aviso.querySelector(".alerta")?.focus(); return; }
