@@ -304,6 +304,9 @@ const tag = p => `<span class="tag ${p}">${ic(p)}<span class="sr">Prioridade </s
 const ordemPrio = p => ["alta", "media", "baixa"].indexOf(p);
 const ordenar = l => [...l].sort((x, y) => x.feita - y.feita || x.data.localeCompare(y.data) || ordemPrio(x.prio) - ordemPrio(y.prio));
 const pendentes = () => E.atividades.filter(a => !a.feita);
+const alfa = (a, b) => a.localeCompare(b, "pt-BR", { sensitivity: "base" });          // ordem alfabética
+const porData = l => [...l].sort((x, y) => x.data.localeCompare(y.data) || ordemPrio(x.prio) - ordemPrio(y.prio));  // ordem de data
+const ordenarDisc = () => E.disciplinas.sort(alfa);
 const porPrioridade = () => [...pendentes()].sort((x, y) => ordemPrio(x.prio) - ordemPrio(y.prio) || x.data.localeCompare(y.data));
 const opcoesHora = (de, ate, sel) => { let o = ""; for (let m = de; m <= ate; m += 30) o += `<option value="${hhmm(m)}" ${sel === hhmm(m) ? "selected" : ""}>${hhmm(m)}</option>`; return o; };
 const sessoesNaData = s => { const d = SEMANA.find(x => x.data === s); return E.plano && d ? sessoesDoDia(E.plano, d.k) : []; };
@@ -426,7 +429,7 @@ function verificar(p) {
     });
     if (totalDia(p, d.k) > LIMITE_ESTUDO) sobrecarga.push(`${d.nome}: ${dur(totalDia(p, d.k))} de estudo`);
   });
-  pendentes().filter(a => a.tipo === "Prova" && diasAte(a.data) >= 0 && diasAte(a.data) <= 6).forEach(a => {
+  porData(pendentes()).filter(a => a.tipo === "Prova" && diasAte(a.data) >= 0 && diasAte(a.data) <= 6).forEach(a => {
     if (!p.sessoes.some(s => s.disc === a.disc && dia(s.dia).data < a.data)) provasSemEstudo.push(`${a.titulo} (${a.disc}) é ${fmt(a.data)} e ainda não tem sessão de estudo antes dessa data.`);
   });
   return { conflitos, sobrecarga, provasSemEstudo };
@@ -471,7 +474,7 @@ function formAtividade(a) {
         </div></div>
 
       <fieldset id="tipo"><legend>Tipo de atividade</legend><div class="opcoes">
-        ${["Prova", "Trabalho", "Tarefa"].map(t => `<label><input type="radio" name="tipo" value="${t}" ${v.tipo === t ? "checked" : ""}>${t}</label>`).join("")}</div></fieldset>
+        ${["Prova", "Tarefa", "Trabalho"].map(t => `<label><input type="radio" name="tipo" value="${t}" ${v.tipo === t ? "checked" : ""}>${t}</label>`).join("")}</div></fieldset>
 
       <div class="campo"><label for="data">Data de entrega ${OBRIG}</label>
         <input type="date" id="data" required min="${HOJE_ISO}" value="${v.data}" aria-describedby="e-data"><p id="e-data" class="msg-erro"></p></div>
@@ -581,7 +584,7 @@ const telas = {
         <button class="btn prim bloco" type="submit" style="margin-top:12px">${ic("mais")} Adicionar disciplina</button>
       </form>
       <ul class="limpa">${E.disciplinas.map((d, i) => {
-        const lista = ordenar(E.atividades.filter(a => a.disc === d)), n = lista.filter(a => !a.feita).length;
+        const lista = porData(E.atividades.filter(a => a.disc === d)), n = lista.filter(a => !a.feita).length;
         if (editandoDisc === d) return `<li class="card"><form id="f-renomear" novalidate>
             <label for="ren-nome">Novo nome para ${esc(d)}</label>
             <input type="text" id="ren-nome" value="${esc(d)}" aria-describedby="e-ren-nome"><p id="e-ren-nome" class="msg-erro"></p>
@@ -635,9 +638,9 @@ const telas = {
 
   "plan-sessoes"() {
     if (!E.rasc || !Object.keys(E.rasc.disp).length) { setTimeout(() => ir("plan-disp")); return ""; }
-    const pend = porPrioridade(), diasDisp = SEMANA.filter(d => E.rasc.disp[d.k]);
+    const pend = porData(pendentes()), diasDisp = SEMANA.filter(d => E.rasc.disp[d.k]);
     return etapas(2) + `<h1 tabindex="-1">Monte suas sessões de estudo</h1>
-      <p class="peq">Adicione quantas sessões quiser. As atividades com prioridade alta aparecem primeiro.</p>
+      <p class="peq">Adicione quantas sessões quiser. As atividades pendentes estão em ordem de entrega.</p>
       ${dica("sessoes", "Toque em “Estudar para esta atividade” para preencher o formulário, ou use “Sugerir sessões para mim” e depois ajuste o que quiser.")}
       <div id="resumo-erros"></div>
 
@@ -764,8 +767,8 @@ const telas = {
         : `<ul class="limpa card">${horas.map(([d, t]) => `<li class="sessao"><span>${esc(d)}</span><span class="hora">${dur(t)}</span></li>`).join("")}</ul>`}
       <h2>Períodos de sobrecarga</h2>
       ${sobreEnt.length || sobreEst.length ? `<div class="alerta aviso"><strong>${ic("aviso")} Atenção a estes dias</strong><ul>
-          ${sobreEnt.map(d => `<li>${fmt(d)}: ${noDia(d)} entregas ou provas</li>`).join("")}
-          ${sobreEst.map(d => `<li>${d.nome}: ${dur(totalDia(E.plano, d.k))} de estudo planejado</li>`).join("")}</ul></div>`
+          ${[...sobreEnt.map(d => [d, `${fmt(d)}: ${noDia(d)} entregas ou provas`]), ...sobreEst.map(d => [d.data, `${fmt(d.data)}: ${dur(totalDia(E.plano, d.k))} de estudo planejado`])]
+            .sort((x, y) => x[0].localeCompare(y[0])).map(([, txt]) => `<li>${txt}</li>`).join("")}</ul></div>`
         : `<div class="alerta ok"><strong>${ic("sucesso")} Nenhum período de sobrecarga</strong>Sua semana está equilibrada.</div>`}`;
   },
 
@@ -854,7 +857,7 @@ main.addEventListener("submit", ev => {
   if (f.id === "f-disc") {
     const nome = $("#nova-disc").value.trim(), erro = validarNomeDisc(nome);
     if (!mostrarErros(erro ? [{ campo: "nova-disc", msg: erro }] : [])) return;
-    E.disciplinas.push(nome); render(false); toast(`Disciplina ${nome} adicionada.`); $("#nova-disc").focus();
+    E.disciplinas.push(nome); ordenarDisc(); render(false); toast(`Disciplina ${nome} adicionada.`); $("#nova-disc").focus();
   }
 
   if (f.id === "f-renomear") {
@@ -945,7 +948,7 @@ main.addEventListener("click", ev => {
     msgErro($("#e-nd-nome"), erro ? (erro.includes("já está") ? `${nome} já está na lista. Selecione-a acima.` : erro) : "");
     if (erro) { $("#nd-nome").setAttribute("aria-invalid", "true"); $("#nd-nome").focus(); return; }
     $("#nd-nome").removeAttribute("aria-invalid");
-    E.disciplinas.push(nome); salvar();
+    E.disciplinas.push(nome); ordenarDisc(); salvar();
     $("#disc").innerHTML = opcoesDisc(nome);
     $("#nd-nome").value = ""; $("#painel-disc").hidden = true;
     const bt = $("#btn-nova-disc"); bt.setAttribute("aria-expanded", "false"); bt.querySelector(".chev").innerHTML = ic("baixo");
@@ -1044,6 +1047,7 @@ function render(navegou) {
   const t = location.hash.slice(1) || "inicio";
   const nome = telas[t] ? t : "inicio";
   if (nome !== "disciplinas") editandoDisc = null;
+  ordenarDisc();
   document.documentElement.classList.toggle("texto-grande", !!E.prefs.textoGrande);
   main.innerHTML = telas[nome]();
   const v = VOLTAR[nome], ajuda = nome === "ajuda" || nome === "boas-vindas" ? "" : `<a class="acao-topo dir" href="#ajuda">${ic("ajuda")} Ajuda</a>`;
