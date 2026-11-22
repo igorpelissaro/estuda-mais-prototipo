@@ -555,14 +555,14 @@ const telas = {
   /* ---------- Tarefa crítica 1: cadastrar e priorizar uma atividade (Alternativa B – tela única) ---------- */
   "nova-atividade"() {
     editId = null;
-    return `<h1 tabindex="-1">Nova atividade</h1><p class="peq">Preencha as informações para cadastrar sua atividade.</p>
+    return `<h1 tabindex="-1">Nova atividade</h1>
       ${dica("form-atv", "Se a disciplina não estiver na lista, use “Minha disciplina não está na lista”. Você não perde o que já preencheu.")}` + formAtividade(null);
   },
 
   "editar-atividade"() {
     const a = E.atividades.find(x => x.id === editId);
     if (!a) { setTimeout(() => ir("atividades")); return ""; }
-    return `<h1 tabindex="-1">Editar atividade</h1><p class="peq">Altere o que precisar e salve.</p>` + formAtividade(a);
+    return `<h1 tabindex="-1">Editar atividade</h1>` + formAtividade(a);
   },
 
   "atividade-salva"() {
